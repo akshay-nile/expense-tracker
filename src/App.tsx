@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { formatLongDate, formatLongMonth, formatRupee, formatShortMonth } from './services/utilities';
+import { addMissingItems, formatLongDate, formatLongMonth, formatRupee, formatShortMonth } from './services/utilities';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import { getExpenses } from './services/expenses';
 import type { TreeNode } from 'primereact/treenode';
@@ -12,11 +12,10 @@ function App() {
   const [expanding, setExpanding] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState<{ [key: string]: boolean }>({});
 
-  useEffect(() => { loadYears(); }, []);
-
-  function loadYears() {
+  useEffect(() => {
     setExpanding(true);
     getExpenses().then(data => {
+      addMissingItems(data, currentDate, 'year');
       const years = data.map(year => ({
         key: `/${year.year}`,
         data: { label: year.year, total: formatRupee(year.total) },
@@ -24,12 +23,13 @@ function App() {
       }));
       setNodes(years);
     }).finally(() => setExpanding(false));
-  }
+  }, [currentDate]);
 
   function loadMonths(yearNode: TreeNode) {
     const yearKey = yearNode.key as string;
     setExpanding(true);
     getExpenses(yearKey).then(data => {
+      addMissingItems(data, currentDate, 'month', yearKey);
       const months = data.map(month => ({
         key: `${yearKey}/${month.month}`,
         data: { label: formatLongMonth(month.month as string), total: formatRupee(month.total) },
@@ -44,6 +44,7 @@ function App() {
     const monthKey = monthNode.key as string;
     setExpanding(true);
     getExpenses(monthKey).then(data => {
+      addMissingItems(data, currentDate, 'day', monthKey);
       const month = formatShortMonth(monthKey.split('/')[2]);
       const days = data.map(day => ({
         key: `${monthKey}/${day.day}`,
