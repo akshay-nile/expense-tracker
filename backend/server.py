@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import cross_origin
 from services.expenses import add_or_update_expenses, get_all_days, get_all_expenses, get_all_months, get_all_years
 
 app = Flask(__name__)
@@ -8,6 +9,7 @@ app = Flask(__name__)
 @app.route('/expenses/<year>')
 @app.route('/expenses/<year>/<month>')
 @app.route('/expenses/<year>/<month>/<day>')
+@cross_origin()
 def expense_tracker(year=None, month=None, day=None):
     if request.method == 'GET':
         if year is None:
@@ -31,4 +33,4 @@ def expense_tracker(year=None, month=None, day=None):
     return 'Something Went Wrong!'
 
 
-app.run(host='localhost', port=5000, debug=True)
+app.run(host='0.0.0.0', port=5000, debug=True)

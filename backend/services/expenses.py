@@ -62,7 +62,7 @@ def get_all_days(year: str, month: str) -> List[Dict]:
         ORDER BY day;
     ''', (year, month))
     rows = cursor.fetchall()
-    return [{"day": row["day"], "total": row["total"]} for row in rows]
+    return [{'day': row['day'], 'total': row['total']} for row in rows]
 
 
 def get_all_expenses(year: str, month: str, day: str) -> List[Dict]:
@@ -74,7 +74,7 @@ def get_all_expenses(year: str, month: str, day: str) -> List[Dict]:
         ORDER BY timestamp;
     ''', (year, month, day))
     rows = cursor.fetchall()
-    return [{"timestamp": row["timestamp"], "purpose": row["purpose"], "amount": row["amount"]} for row in rows]
+    return [{'timestamp': row['timestamp'], 'purpose': row['purpose'], 'amount': row['amount']} for row in rows]
 
 
 def add_or_update_expenses(expenses: List[Dict]) -> Dict[str, int]:
@@ -105,7 +105,7 @@ def add_or_update_expenses(expenses: List[Dict]) -> Dict[str, int]:
             inserted += 1
 
     conn.commit()
-    return {"inserted": inserted, "updated": updated}
+    return {'inserted': inserted, 'updated': updated}
 
 
 # get_conn().executescript('''
