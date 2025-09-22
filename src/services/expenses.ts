@@ -1,18 +1,34 @@
+import type { NodeData, ExpenseData } from './types';
+
 let baseURL = import.meta.env.VITE_BASE_URL as string;
+let retryCount = 2;
 
-type NodeChild = { year?: string, month?: string, day?: string, total: number };
-// type ExpenseChild = { timestamp: number, purpose: string, amount: number };
-
-export async function getExpenses(path = ''): Promise<NodeChild[]> {
+async function _fetch(path: string): Promise<[]> {
     try {
         const response = await fetch(`${baseURL}/expenses${path}`);
         return await response.json();
     } catch (error) {
         console.error(error);
-        if (import.meta.env.VITE_WIFI_URL) {
+        if (import.meta.env.VITE_WIFI_URL && retryCount-- > 0) {
             baseURL = import.meta.env.VITE_WIFI_URL as string;
-            return await getExpenses(path);
+            return await _fetch(path);
         }
     }
     return [];
+}
+
+export async function getYears(): Promise<NodeData[]> {
+    return await _fetch('');
+}
+
+export async function getMonthsOfYear(yearKey: string): Promise<NodeData[]> {
+    return await _fetch(yearKey);
+}
+
+export async function getDaysOfMonth(monthKey: string): Promise<NodeData[]> {
+    return await _fetch(monthKey);
+}
+
+export async function getExpensesOfDay(dayKey: string): Promise<ExpenseData[]> {
+    return await _fetch(dayKey);
 }

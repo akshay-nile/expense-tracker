@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { addMissingItems, formatLongDate, formatLongMonth, formatRupee, formatShortMonth } from './services/utilities';
 import useCurrentDate from './custom-hooks/useCurrentDate';
-import { getExpenses } from './services/expenses';
-import type { TreeNode } from 'primereact/treenode';
+import { getYears, getMonthsOfYear, getDaysOfMonth, getExpensesOfDay } from './services/expenses';
 import { TreeTable } from 'primereact/treetable';
 import { Column } from 'primereact/column';
+import type { TreeNode } from 'primereact/treenode';
 
 function App() {
   const currentDate = useCurrentDate();
@@ -14,7 +14,7 @@ function App() {
 
   useEffect(() => {
     setExpanding(true);
-    getExpenses().then(data => {
+    getYears().then(data => {
       addMissingItems(data, currentDate, 'year');
       const years = data.map(year => ({
         key: `/${year.year}`,
@@ -28,7 +28,7 @@ function App() {
   function loadMonths(yearNode: TreeNode) {
     const yearKey = yearNode.key as string;
     setExpanding(true);
-    getExpenses(yearKey).then(data => {
+    getMonthsOfYear(yearKey).then(data => {
       addMissingItems(data, currentDate, 'month', yearKey);
       const months = data.map(month => ({
         key: `${yearKey}/${month.month}`,
@@ -43,7 +43,7 @@ function App() {
   function loadDays(monthNode: TreeNode) {
     const monthKey = monthNode.key as string;
     setExpanding(true);
-    getExpenses(monthKey).then(data => {
+    getDaysOfMonth(monthKey).then(data => {
       addMissingItems(data, currentDate, 'day', monthKey);
       const month = formatShortMonth(monthKey.split('/')[2]);
       const days = data.map(day => ({
@@ -52,6 +52,20 @@ function App() {
         leaf: false
       }));
       monthNode.children = days;
+      setNodes(prev => [...prev]);
+    }).finally(() => setExpanding(false));
+  }
+
+  function loadExpenses(dayNode: TreeNode) {
+    const dayKey = dayNode.key as string;
+    setExpanding(true);
+    getExpensesOfDay(dayKey).then(data => {
+      const days = data.map(expense => ({
+        key: `${dayKey}/${expense.timestamp}`,
+        data: { label: expense.purpose, total: formatRupee(expense.amount) },
+        leaf: true
+      }));
+      dayNode.children = days;
       setNodes(prev => [...prev]);
     }).finally(() => setExpanding(false));
   }
@@ -66,10 +80,10 @@ function App() {
       setExpandedKeys({ ...expandedKeys });
     }
     else {
-      const slashCounts = (node.key as string).split('/').length - 1;
-      if (slashCounts === 1) loadMonths(node);
-      else if (slashCounts === 2) loadDays(node);
-      else if (slashCounts === 3) console.warn(node.key);
+      const slashCount = (node.key as string).split('/').length - 1;
+      if (slashCount === 1) loadMonths(node);
+      else if (slashCount === 2) loadDays(node);
+      else if (slashCount === 3) loadExpenses(node);
       setExpandedKeys({ ...expandedKeys, [nodeKey]: true });
     }
   }
