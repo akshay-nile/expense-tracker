@@ -1,4 +1,4 @@
-import type { NodeData, ExpenseData } from './types';
+import { type Day, type Expense, type Month, type Year } from './models';
 
 let baseURL = import.meta.env.VITE_BASE_URL as string;
 let retryCount = 2;
@@ -17,18 +17,18 @@ async function _fetch(path: string): Promise<[]> {
     return [];
 }
 
-export async function getYears(): Promise<NodeData[]> {
+export async function getYears(): Promise<Year[]> {
     return await _fetch('');
 }
 
-export async function getMonthsOfYear(yearKey: string): Promise<NodeData[]> {
+export async function getMonthsOfYear(yearKey: string): Promise<Month[]> {
     return await _fetch(yearKey);
 }
 
-export async function getDaysOfMonth(monthKey: string): Promise<NodeData[]> {
+export async function getDaysOfMonth(monthKey: string): Promise<Day[]> {
     return await _fetch(monthKey);
 }
 
-export async function getExpensesOfDay(dayKey: string): Promise<ExpenseData[]> {
+export async function getExpensesOfDay(dayKey: string): Promise<Expense[]> {
     return await _fetch(dayKey);
 }
