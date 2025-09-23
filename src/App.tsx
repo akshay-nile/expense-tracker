@@ -8,8 +8,8 @@ function App() {
   useEffect(() => { }, []);
 
   return (
-    <div className="d-flex flex-column">
-      <div className="text-bold text-center m-5 text-lg">
+    <div className="flex flex-col items-center">
+      <div className="text-2xl font-light tracking-wider mt-5">
         {formatLongDate(today)}
       </div>
     </div >
