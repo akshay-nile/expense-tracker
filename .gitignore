@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Cached builds
+# Python cached builds
 __pycache__
+backend/services/__pycache__/expenses.cpython-312.pyc
