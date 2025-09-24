@@ -1,23 +1,21 @@
-import { useEffect } from 'react';
+import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import { formatLongDate } from './services/utilities';
-import YearList from './components/YearList';
 
 function App() {
   const today = useCurrentDate();
 
-  useEffect(() => { }, []);
-
   return (
-    <div className="flex flex-col items-stretch">
-      <div className="text-center text-2xl font-light tracking-wider m-4 mt-8">
-        {formatLongDate(today)}
+    <div className="flex justify-center">
+      <div className="w-full sm:w-2/5">
+        <div className="text-center text-2xl font-light tracking-wider my-8">
+          {formatLongDate(today)}
+        </div>
+        <div className="m-2">
+          <YearList today={today} />
+        </div>
       </div>
-
-      <div className="m-4">
-        <YearList today={today} />
-      </div>
-    </div >
+    </div>
   );
 };
 
