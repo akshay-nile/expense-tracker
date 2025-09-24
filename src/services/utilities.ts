@@ -38,7 +38,7 @@ export function formatShortMonth(month: string): string {
 
 export function formatTime(time: Date): string {
     const hours24 = time.getHours();
-    const hours12 = (hours24 - 12).toString().padStart(2, '0');
+    const hours12 = (hours24 % 12 || 12).toString().padStart(2, '0');
     const minutes = time.getMinutes().toString().padStart(2, '0');
     return `${hours12}:${minutes} ${hours24 >= 12 ? 'PM' : 'AM'}`;
 }
@@ -107,8 +107,4 @@ export function daySkeletonLength(today: Date, monthKey: string): { length: numb
     return (monthKey.endsWith((today.getMonth() + 1).toString().padStart(2, '0')))
         ? { length: today.getDate() }
         : { length: 30 };
-}
-
-export function expenseSkeletonLength(total: number): { length: number } {
-    return (total === 0) ? { length: 1 } : { length: Math.round(total / 500) || 1 };
 }

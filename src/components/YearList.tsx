@@ -7,9 +7,9 @@ import { getYears } from "../services/expenses";
 import { addMissingYears, formatRupee, yearSkeletonLength } from "../services/utilities";
 import MonthList from "./MonthList";
 
-type Props = { today: Date };
+type Props = { today: Date, onUpdateBreadCrumb: (key: string) => void };
 
-function YearList({ today }: Props) {
+function YearList({ today, onUpdateBreadCrumb }: Props) {
     const [years, setYears] = useState<Year[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -36,23 +36,26 @@ function YearList({ today }: Props) {
 
     return (
         loading
-            ? Array.from(yearSkeletonLength(today), (i: number) =>
+            ? Array.from(yearSkeletonLength(today), (_, i: number) =>
                 (<Skeleton key={i} height="3.5rem" className="my-1" />))
-            : <Accordion> {
-                years.map(year => (
-                    <AccordionTab key={year.key} header={
-                        <div className="w-full flex justify-between font-bold">
-                            <div>{year.year}</div>
-                            <div>{formatRupee(year.total)}</div>
-                        </div>
-                    }>
-                        <div>
-                            <MonthList today={today} yearKey={year.key as string}
-                                onYearTotalChange={onYearTotalChange} />
-                        </div>
-                    </AccordionTab>
-                ))
-            }</Accordion>
+            : <Accordion
+                onTabOpen={e => onUpdateBreadCrumb(years[e.index - 1].key as string)}
+                onTabClose={() => onUpdateBreadCrumb('')}> {
+                    years.map(year => (
+                        <AccordionTab key={year.key} header={
+                            <div className="w-full flex justify-between font-bold">
+                                <div>{year.year}</div>
+                                <div>{formatRupee(year.total)}</div>
+                            </div>
+                        }>
+                            <div>
+                                <MonthList today={today} yearKey={year.key as string}
+                                    onYearTotalChange={onYearTotalChange}
+                                    onUpdateBreadCrumb={onUpdateBreadCrumb} />
+                            </div>
+                        </AccordionTab>
+                    ))
+                }</Accordion>
     );
 }
 

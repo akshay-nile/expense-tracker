@@ -6,9 +6,13 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { getExpensesOfDay, postExpensesOfDay } from "../services/expenses";
 import { formatRupee } from "../services/utilities";
 
-type Props = { dayKey: string, onDayTotalChange: (event: TotalChangeEvent) => void };
+type Props = {
+    dayKey: string,
+    onUpdateBreadCrumb: (key: string) => void,
+    onDayTotalChange: (event: TotalChangeEvent) => void
+};
 
-function ExpenseList({ dayKey, onDayTotalChange }: Props) {
+function ExpenseList({ dayKey, onDayTotalChange, onUpdateBreadCrumb }: Props) {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [saving, setSaving] = useState<boolean>(false);
@@ -22,11 +26,12 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
                 setLoading(true);
                 const data = await getExpensesOfDay(dayKey);
                 setExpenses(data);
+                onUpdateBreadCrumb(dayKey + "/₹");
             }
             catch (error) { console.error(error); }
             finally { setLoading(false); }
         })();
-    }, [dayKey]);
+    }, [dayKey, onUpdateBreadCrumb]);
 
     function setupEditMode() {
         expenses.forEach(expense => editExpenses.push({
@@ -36,6 +41,7 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
         }));
         setEditExpenses([...editExpenses]);
         setEditMode(true);
+        onUpdateBreadCrumb(dayKey + "/'₹'");
     }
 
     function clearEditMode() {
@@ -43,6 +49,7 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
         setSaving(false);
         setEditMode(false);
         setEditInvalid(false);
+        onUpdateBreadCrumb(dayKey + "/₹");
     }
 
     function isValidExpense(expense: Expense): boolean {

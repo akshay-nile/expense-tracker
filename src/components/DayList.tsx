@@ -7,9 +7,13 @@ import { getDaysOfMonth } from "../services/expenses";
 import { addMissingDays, formatShortMonth, formatRupee, daySkeletonLength } from "../services/utilities";
 import ExpenseList from "./ExpenseList";
 
-type Props = { today: Date, monthKey: string, onMonthTotalChange: (event: TotalChangeEvent) => void };
+type Props = {
+    today: Date, monthKey: string,
+    onUpdateBreadCrumb: (key: string) => void,
+    onMonthTotalChange: (event: TotalChangeEvent) => void
+};
 
-function DayList({ today, monthKey, onMonthTotalChange }: Props) {
+function DayList({ today, monthKey, onMonthTotalChange, onUpdateBreadCrumb }: Props) {
     const [days, setDays] = useState<Day[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -40,23 +44,26 @@ function DayList({ today, monthKey, onMonthTotalChange }: Props) {
 
     return (
         loading
-            ? Array.from(daySkeletonLength(today, monthKey), (i: number) =>
+            ? Array.from(daySkeletonLength(today, monthKey), (_, i: number) =>
                 (<Skeleton key={i} height="3.5rem" className="my-1" />))
-            : <Accordion> {
-                days.map(day => (
-                    <AccordionTab key={day.key} header={
-                        <div className="w-full flex justify-between font-medium">
-                            <div>{day.day} {formatShortMonth(monthKey.split('/')[2])}</div>
-                            <div>{formatRupee(day.total)}</div>
-                        </div>
-                    }>
-                        <div>
-                            <ExpenseList dayKey={day.key as string}
-                                onDayTotalChange={onDayTotalChange} />
-                        </div>
-                    </AccordionTab>
-                ))
-            }</Accordion>
+            : <Accordion
+                onTabOpen={e => onUpdateBreadCrumb(days[e.index - 1].key as string)}
+                onTabClose={() => onUpdateBreadCrumb(monthKey)}> {
+                    days.map(day => (
+                        <AccordionTab key={day.key} header={
+                            <div className="w-full flex justify-between font-medium">
+                                <div>{day.day} {formatShortMonth(monthKey.split('/')[2])}</div>
+                                <div>{formatRupee(day.total)}</div>
+                            </div>
+                        }>
+                            <div>
+                                <ExpenseList dayKey={day.key as string}
+                                    onDayTotalChange={onDayTotalChange}
+                                    onUpdateBreadCrumb={onUpdateBreadCrumb} />
+                            </div>
+                        </AccordionTab>
+                    ))
+                }</Accordion>
     );
 }
 

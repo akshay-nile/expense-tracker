@@ -27,3 +27,9 @@ input::-webkit-inner-spin-button {
 .p-button.text-xs:focus {
     box-shadow: none !important;
 }
+
+.sticky {
+    position: fixed;
+    top: 0;
+    z-index: 100;
+}
