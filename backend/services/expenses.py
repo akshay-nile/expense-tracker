@@ -7,7 +7,7 @@ _conn: sqlite3.Connection | None = None
 def get_conn() -> sqlite3.Connection:
     global _conn
     if _conn is None:
-        _conn = sqlite3.connect('expenses.db', check_same_thread=False)
+        _conn = sqlite3.connect('database/expenses.db', check_same_thread=False)
         _conn.row_factory = sqlite3.Row
         _conn.execute('''
         CREATE TABLE IF NOT EXISTS expenses (

@@ -25,4 +25,5 @@ dist-ssr
 
 # Python cached builds
 __pycache__
-backend/services/__pycache__/expenses.cpython-312.pyc
+backend/services/__pycache__
+backend/services/__pycache__/*
