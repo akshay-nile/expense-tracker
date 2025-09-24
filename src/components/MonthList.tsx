@@ -4,7 +4,7 @@ import type { Month, TotalChangeEvent } from "../services/models";
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Skeleton } from "primereact/skeleton";
 import { getMonthsOfYear } from "../services/expenses";
-import { addMissingMonths, formatLongMonth, formatRupee } from "../services/utilities";
+import { addMissingMonths, formatLongMonth, formatRupee, monthSkeletonLength } from "../services/utilities";
 import DayList from "./DayList";
 
 type Props = { today: Date, yearKey: string, onYearTotalChange: (event: TotalChangeEvent) => void };
@@ -40,7 +40,8 @@ function MonthList({ today, yearKey, onYearTotalChange }: Props) {
 
     return (
         loading
-            ? <Skeleton height="3.4rem"></Skeleton>
+            ? Array.from(monthSkeletonLength(today, yearKey), (i: number) =>
+                (<Skeleton key={i} height="3.5rem" className="my-1" />))
             : <Accordion> {
                 months.map(month => (
                     <AccordionTab key={month.key} header={

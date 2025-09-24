@@ -92,3 +92,23 @@ export function addMissingDays(data: Array<Day>, today: Date, monthKey: string) 
 
     data.sort((a, b) => parseInt(a.day) - parseInt(b.day));
 }
+
+export function yearSkeletonLength(today: Date): { length: number } {
+    return { length: today.getFullYear() - 2025 + 1 };
+}
+
+export function monthSkeletonLength(today: Date, yearKey: string): { length: number } {
+    return (yearKey.endsWith(today.getFullYear().toString()))
+        ? { length: today.getMonth() + 1 }
+        : { length: 12 };
+}
+
+export function daySkeletonLength(today: Date, monthKey: string): { length: number } {
+    return (monthKey.endsWith((today.getMonth() + 1).toString().padStart(2, '0')))
+        ? { length: today.getDate() }
+        : { length: 30 };
+}
+
+export function expenseSkeletonLength(total: number): { length: number } {
+    return (total === 0) ? { length: 1 } : { length: Math.round(total / 500) || 1 };
+}

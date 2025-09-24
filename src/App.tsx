@@ -11,7 +11,7 @@ function App() {
     <div className="flex justify-center">
       <div className="w-full sm:w-2/5">
 
-        <div className="w-full font-light tracking-wider my-6">
+        <div className="w-full font-light tracking-wider my-6 px-1">
           <div className="flex justify-between items-center mx-3">
             <div className="text-2xl text-gray-200">{weekdays[today.getDay()]}</div>
             <div className="text-sm self-start">{formatTime(time)}</div>

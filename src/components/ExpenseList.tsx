@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Expense, TotalChangeEvent } from "../services/models";
 
 import { Button } from "primereact/button";
-import { Skeleton } from "primereact/skeleton";
+import { ProgressSpinner } from "primereact/progressspinner";
 import { getExpensesOfDay, postExpensesOfDay } from "../services/expenses";
 import { formatRupee } from "../services/utilities";
 
@@ -99,11 +99,11 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
 
     return (
         loading
-            ? <Skeleton height="3.2rem"></Skeleton>
+            ? <ProgressSpinner style={{ width: '100%', height: '3em' }} strokeWidth="0.2em" animationDuration="1s" aria-label="Loading" />
             : <div className="w-full flex flex-col font-normal m-0 p-0">
                 {
                     (editMode ? editExpenses : expenses).length === 0
-                        ? <div className="text-center my-2 text-lg text-gray-300 cursor-pointer"
+                        ? <div className="text-center my-3 text-lg text-gray-300 cursor-pointer"
                             onClick={() => !editMode && setupEditMode()}>No Expenses</div>
                         : (editMode ? editExpenses : expenses).map(expense => (
                             <div key={expense.timestamp} className={"flex m-0 my-2 gap-1 text-[16px] " + (editMode ? 'mx-0' : 'mx-2')}>
@@ -113,7 +113,8 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
                                     onClick={() => !editMode && setupEditMode()}
                                     onChange={e => editPurpose(e.target.value, expense.timestamp)} />
 
-                                <input type={editMode ? 'number' : 'text'} placeholder="Amount" className="w-full p-0 px-2 m-0 rounded-sm text-right flex-2"
+                                <input placeholder="Amount" className="w-full p-0 px-2 m-0 rounded-sm text-right flex-2"
+                                    type={editMode ? 'number' : 'text'}
                                     readOnly={!editMode}
                                     value={editMode ? expense.amount : formatRupee(expense.amount)}
                                     onClick={() => !editMode && setupEditMode()}
