@@ -99,7 +99,7 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
 
     return (
         loading
-            ? <ProgressSpinner style={{ width: '100%', height: '3em' }} strokeWidth="0.2em" animationDuration="1s" aria-label="Loading" />
+            ? <ProgressSpinner style={{ width: '100%', height: '3em' }} strokeWidth="0.3em" animationDuration="0.5s" aria-label="Loading" />
             : <div className="w-full flex flex-col font-normal m-0 p-0">
                 {
                     (editMode ? editExpenses : expenses).length === 0
