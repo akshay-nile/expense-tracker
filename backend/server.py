@@ -1,14 +1,15 @@
+from re import split
 from flask import Flask, jsonify, request
 from flask_cors import cross_origin
-from services.expenses import add_or_update_expenses, get_all_days, get_all_expenses, get_all_months, get_all_years
+from services.expenses import get_all_days, get_all_expenses, get_all_months, get_all_years, update_expenses
 
 app = Flask(__name__)
 
 
-@app.route('/expenses', methods=['GET', 'POST'])
+@app.route('/expenses')
 @app.route('/expenses/<year>')
 @app.route('/expenses/<year>/<month>')
-@app.route('/expenses/<year>/<month>/<day>')
+@app.route('/expenses/<year>/<month>/<day>', methods=['GET', 'POST'])
 @cross_origin()
 def expense_tracker(year=None, month=None, day=None):
     if request.method == 'GET':
@@ -23,10 +24,9 @@ def expense_tracker(year=None, month=None, day=None):
     if request.method == 'POST':
         try:
             data = request.get_json()
-            if isinstance(data, list):
-                status = add_or_update_expenses(data)
-                return jsonify(status), (201 if status['inserted'] > 0 else 200)
-            return jsonify({'error': 'Bad Request', 'description': 'invalid request body'}), 400
+            if isinstance(data, list) and year and month and day:
+                return jsonify(update_expenses(data, year, month, day)), 200
+            return jsonify({'error': 'Bad Request'}), 400
         except Exception as e:
             return jsonify({'error': str(e)}), 400
 

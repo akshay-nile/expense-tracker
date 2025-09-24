@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Year } from "../services/models";
+import type { TotalChangeEvent, Year } from "../services/models";
 
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Skeleton } from "primereact/skeleton";
@@ -27,6 +27,13 @@ function YearList({ today }: Props) {
         })();
     }, [today]);
 
+    function onYearTotalChange(event: TotalChangeEvent) {
+        const targetYear = years.find(year => year.key === event.key);
+        if (!targetYear) throw new Error('No targetYear found for yearKey: ' + event.key);
+        targetYear.total = event.total;
+        setYears([...years]);
+    }
+
     return (
         loading
             ? <Skeleton height="3.5rem"></Skeleton>
@@ -39,7 +46,8 @@ function YearList({ today }: Props) {
                         </div>
                     }>
                         <div>
-                            <MonthList today={today} yearKey={year.key as string} />
+                            <MonthList today={today} yearKey={year.key as string}
+                                onYearTotalChange={onYearTotalChange} />
                         </div>
                     </AccordionTab>
                 ))

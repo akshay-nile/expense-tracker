@@ -1,6 +1,6 @@
 import type { Day, Month, Year } from "./models";
 
-const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+export const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 const rupeeFormatter = new Intl.NumberFormat('en-IN', {
@@ -21,11 +21,10 @@ export function formatISODate(date: Date): string {
 }
 
 export function formatLongDate(date: Date): string {
-    const weekDay = weekdays[date.getDay()];
     const day = String(date.getDate()).padStart(2, "0");
     const monthName = months[date.getMonth()];
     const year = date.getFullYear();
-    return `${weekDay}, ${day} ${monthName}, ${year}`;
+    return `${day} ${monthName}, ${year}`;
 }
 
 export function formatLongMonth(month: string): string {
@@ -35,6 +34,13 @@ export function formatLongMonth(month: string): string {
 
 export function formatShortMonth(month: string): string {
     return formatLongMonth(month).substring(0, 3);
+}
+
+export function formatTime(time: Date): string {
+    const hours24 = time.getHours();
+    const hours12 = (hours24 - 12).toString().padStart(2, '0');
+    const minutes = time.getMinutes().toString().padStart(2, '0');
+    return `${hours12}:${minutes} ${hours24 >= 12 ? 'PM' : 'AM'}`;
 }
 
 export function addMissingYears(data: Array<Year>, today: Date) {

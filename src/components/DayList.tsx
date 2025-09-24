@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Day } from "../services/models";
+import type { Day, TotalChangeEvent } from "../services/models";
 
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Skeleton } from "primereact/skeleton";
@@ -7,9 +7,9 @@ import { getDaysOfMonth } from "../services/expenses";
 import { addMissingDays, formatShortMonth, formatRupee } from "../services/utilities";
 import ExpenseList from "./ExpenseList";
 
-type Props = { today: Date, monthKey: string };
+type Props = { today: Date, monthKey: string, onMonthTotalChange: (event: TotalChangeEvent) => void };
 
-function DayList({ today, monthKey }: Props) {
+function DayList({ today, monthKey, onMonthTotalChange }: Props) {
     const [days, setDays] = useState<Day[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -27,6 +27,17 @@ function DayList({ today, monthKey }: Props) {
         })();
     }, [today, monthKey]);
 
+    function onDayTotalChange(event: TotalChangeEvent) {
+        const targetDay = days.find(day => day.key === event.key);
+        if (!targetDay) throw new Error('No targetDay found for dayKey: ' + event.key);
+        targetDay.total = event.total;
+        setDays([...days]);
+        onMonthTotalChange({
+            key: monthKey,
+            total: days.map(day => day.total).reduce((a, b) => a + b, 0)
+        });
+    }
+
     return (
         loading
             ? <Skeleton height="3.3rem"></Skeleton>
@@ -39,7 +50,8 @@ function DayList({ today, monthKey }: Props) {
                         </div>
                     }>
                         <div>
-                            <ExpenseList dayKey={day.key as string} />
+                            <ExpenseList dayKey={day.key as string}
+                                onDayTotalChange={onDayTotalChange} />
                         </div>
                     </AccordionTab>
                 ))

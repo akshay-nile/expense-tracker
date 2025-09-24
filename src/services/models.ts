@@ -23,3 +23,14 @@ export interface Expense {
     purpose: string;
     amount: number;
 }
+
+export interface PostResult {
+    inserted: number,
+    updated: number,
+    deleted: number
+}
+
+export interface TotalChangeEvent {
+    key: string,
+    total: number
+}

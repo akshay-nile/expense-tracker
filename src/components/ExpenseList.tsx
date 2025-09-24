@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import type { Expense } from "../services/models";
+import type { Expense, TotalChangeEvent } from "../services/models";
 
 import { Button } from "primereact/button";
 import { Skeleton } from "primereact/skeleton";
-import { getExpensesOfDay } from "../services/expenses";
+import { getExpensesOfDay, postExpensesOfDay } from "../services/expenses";
 import { formatRupee } from "../services/utilities";
 
-type Props = { dayKey: string };
+type Props = { dayKey: string, onDayTotalChange: (event: TotalChangeEvent) => void };
 
-function ExpenseList({ dayKey }: Props) {
+function ExpenseList({ dayKey, onDayTotalChange }: Props) {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [saving, setSaving] = useState<boolean>(false);
     const [editMode, setEditMode] = useState<boolean>(false);
     const [editInvalid, setEditInvalid] = useState<boolean>(false);
     const [editExpenses, setEditExpenses] = useState<Expense[]>([]);
@@ -39,6 +40,7 @@ function ExpenseList({ dayKey }: Props) {
 
     function clearEditMode() {
         setEditExpenses([]);
+        setSaving(false);
         setEditMode(false);
         setEditInvalid(false);
     }
@@ -64,16 +66,16 @@ function ExpenseList({ dayKey }: Props) {
         setEditInvalid(isValidExpense(editExpense));
     }
 
-    function addNewExpense() {
+    function addNewEditExpense() {
         editExpenses.push({ timestamp: Date.now(), purpose: '', amount: 0 });
         setEditExpenses([...editExpenses]);
         setEditInvalid(true);
     }
 
-    function deleteExpense(timestamp: number) {
+    function deleteEditExpense(timestamp: number) {
         const activeEditExpenses = editExpenses.filter(edtExp => edtExp.timestamp !== timestamp);
         setEditExpenses(activeEditExpenses);
-        setEditInvalid(editExpenses.some(isValidExpense));
+        setEditInvalid(activeEditExpenses.some(isValidExpense));
     }
 
     function findEditExpense(timestamp: number): Expense {
@@ -82,13 +84,26 @@ function ExpenseList({ dayKey }: Props) {
         return editExpense;
     }
 
+    async function saveEditExpenses() {
+        if (saving || editExpenses.some(isValidExpense)) return;
+        setSaving(true);
+        const status = await postExpensesOfDay(editExpenses, dayKey);
+        console.log(status);
+        onDayTotalChange({
+            key: dayKey,
+            total: editExpenses.map(edtExp => edtExp.amount).reduce((a, b) => a + b, 0)
+        });
+        setExpenses([...editExpenses]);
+        clearEditMode();
+    }
+
     return (
         loading
             ? <Skeleton height="3.2rem"></Skeleton>
             : <div className="w-full flex flex-col font-normal m-0 p-0">
                 {
                     (editMode ? editExpenses : expenses).length === 0
-                        ? <div className="text-center my-2 text-lg text-gray-300"
+                        ? <div className="text-center my-2 text-lg text-gray-300 cursor-pointer"
                             onClick={() => !editMode && setupEditMode()}>No Expenses</div>
                         : (editMode ? editExpenses : expenses).map(expense => (
                             <div key={expense.timestamp} className={"flex m-0 my-2 gap-1 text-[16px] " + (editMode ? 'mx-0' : 'mx-2')}>
@@ -105,7 +120,8 @@ function ExpenseList({ dayKey }: Props) {
                                     onChange={e => editAmount(e.target.value, expense.timestamp)} />
 
                                 {editMode && <Button icon="pi pi-minus" rounded outlined aria-label="Delete" className="text-xs"
-                                    onClick={() => deleteExpense(expense.timestamp)} />}
+                                    disabled={saving}
+                                    onClick={() => deleteEditExpense(expense.timestamp)} />}
                             </div>
                         ))
                 }
@@ -113,15 +129,17 @@ function ExpenseList({ dayKey }: Props) {
                     editMode &&
                     <div className="w-full flex justify-between items-center mt-2 mb-1">
                         <div className="flex gap-3 mx-1">
-                            <Button icon="pi pi-save" rounded outlined aria-label="Save" className="text-xs"
-                                disabled={editInvalid} />
+                            <Button rounded outlined aria-label="Save" className="text-xs"
+                                icon={"pi " + (saving ? 'pi-spin pi-spinner' : 'pi-save')}
+                                disabled={editInvalid || saving}
+                                onClick={() => saveEditExpenses()} />
                             <Button icon="pi pi-times" rounded outlined aria-label="Cancel" className="text-xs"
                                 onClick={() => clearEditMode()} />
                         </div>
                         <div className="m-0">
                             <Button icon="pi pi-plus" rounded outlined aria-label="Add" className="text-xs"
-                                disabled={editInvalid}
-                                onClick={() => addNewExpense()} />
+                                disabled={editInvalid || saving}
+                                onClick={() => addNewEditExpense()} />
                         </div>
                     </div>
                 }

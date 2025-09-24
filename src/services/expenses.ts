@@ -1,4 +1,4 @@
-import { type Day, type Expense, type Month, type Year } from './models';
+import { type Day, type Expense, type Month, type PostResult, type Year } from './models';
 
 let baseURL = import.meta.env.VITE_BASE_URL as string;
 let retryCount = 2;
@@ -31,4 +31,16 @@ export async function getDaysOfMonth(monthKey: string): Promise<Day[]> {
 
 export async function getExpensesOfDay(dayKey: string): Promise<Expense[]> {
     return await _fetch(dayKey);
+}
+
+export async function postExpensesOfDay(expenses: Expense[], dayKey: string): Promise<PostResult | null> {
+    try {
+        const response = await fetch(`${baseURL}/expenses${dayKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(expenses)
+        });
+        return await response.json();
+    } catch (error) { console.error(error); }
+    return null;
 }

@@ -77,19 +77,26 @@ def get_all_expenses(year: str, month: str, day: str) -> List[Dict]:
     return [{'timestamp': row['timestamp'], 'purpose': row['purpose'], 'amount': row['amount']} for row in rows]
 
 
-def add_or_update_expenses(expenses: List[Dict]) -> Dict[str, int]:
+def update_expenses(expenses: List[Dict], year: str, month: str, day: str) -> Dict[str, int]:
     conn = get_conn()
     cursor = conn.cursor()
 
-    inserted = 0
-    updated = 0
+    old_timestamps = tuple(map(lambda row: row['timestamp'], get_all_expenses(year, month, day)))
+    new_timestamps = tuple(map(lambda row: row['timestamp'], expenses))
+
+    date = f'{year}-{month}-{day}'
+    inserted, updated, deleted = max(len(new_timestamps), len(old_timestamps)), 0, 0
+
+    for old_timestamp in old_timestamps:
+        if old_timestamp not in new_timestamps:
+            cursor.execute('DELETE FROM expenses WHERE timestamp = ?', (old_timestamp,))
+            deleted += 1
+        else:
+            updated += 1
+    inserted -= (updated + deleted)
 
     for expense in expenses:
-        exists = cursor.execute(
-            'SELECT 1 FROM expenses WHERE timestamp = ?',
-            (expense.get('timestamp'),)
-        ).fetchone() is not None
-
+        expense['date'] = date
         cursor.execute('''
             INSERT INTO expenses (timestamp, date, purpose, amount)
             VALUES (:timestamp, :date, :purpose, :amount)
@@ -99,13 +106,8 @@ def add_or_update_expenses(expenses: List[Dict]) -> Dict[str, int]:
                 amount  = excluded.amount;
         ''', expense)
 
-        if exists:
-            updated += 1
-        else:
-            inserted += 1
-
     conn.commit()
-    return {'inserted': inserted, 'updated': updated}
+    return {'inserted': inserted, 'updated': updated, 'deleted': deleted}
 
 
 # get_conn().executescript('''
