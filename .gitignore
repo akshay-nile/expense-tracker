@@ -24,6 +24,6 @@ dist-ssr
 *.sw?
 
 # Python cached builds
-__pycache__
-backend/services/__pycache__
-backend/services/__pycache__/*
+__pycache__/
+*.py[cod]
+
