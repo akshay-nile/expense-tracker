@@ -12,13 +12,10 @@ function App() {
 
   const [breadCrumbItems, setBreadCrumbItems] = useState<MenuItem[]>([]);
 
-  const updateBreadCrumb = useCallback((key: string) => {
+  const onUpdateBreadCrumb = useCallback((key: string) => {
     const splits = key.split('/');
     const items: MenuItem[] = [];
-    if (splits.length < 2) {
-      setBreadCrumbItems([]);
-      return;
-    }
+    if (splits.length < 2) { setBreadCrumbItems([]); return; }
     if (splits.length >= 2) items.push({ label: 'Year ' + splits[1] });
     if (splits.length >= 3) items.push({ label: formatLongMonth(splits[2]) });
     if (splits.length >= 4) items.push({ label: 'Day ' + parseInt(splits[3]) });
@@ -32,18 +29,28 @@ function App() {
 
         <div className="w-full font-light tracking-wider mt-6 px-1">
           <div className="flex justify-between items-center mx-3">
-            <div className="text-2xl text-gray-200">{weekdays[today.getDay()]}</div>
+            <div className="text-2xl text-gray-200 cursor-pointer" onClick={() => { }}>
+              {weekdays[today.getDay()]}
+            </div>
             <div className="text-sm self-start">{formatTime(time)}</div>
           </div>
-          <div className="text-xl mx-3">{formatLongDate(today)}</div>
+          <div className="text-xl mx-3 cursor-pointer" onClick={() => { }}>
+            {formatLongDate(today)}
+          </div>
         </div>
 
-        <div className="my-4 mb-5 mx-2.25">
-          <BreadCrumb model={breadCrumbItems} home={{ icon: 'pi pi-home' }} style={{ fontSize: '15px' }} />
+        <div className="my-4 mb-5 mx-2.25 p-0">
+          <BreadCrumb model={breadCrumbItems} home={{ icon: 'pi pi-home' }}
+            style={{
+              fontWeight: '350', height: '3em',
+              fontSize: breadCrumbItems.length > 2 ? '14px' : '15px',
+              padding: breadCrumbItems.length > 2 ? '0.8em' : '1.2em'
+            }} />
         </div>
 
         <div className="my-4 mx-2.25">
-          <YearList today={today} onUpdateBreadCrumb={updateBreadCrumb} />
+          <YearList today={today}
+            onUpdateBreadCrumb={onUpdateBreadCrumb} />
         </div>
 
       </div>

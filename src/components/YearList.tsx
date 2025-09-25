@@ -7,11 +7,15 @@ import { getYears } from "../services/expenses";
 import { addMissingYears, formatRupee, yearSkeletonLength } from "../services/utilities";
 import MonthList from "./MonthList";
 
-type Props = { today: Date, onUpdateBreadCrumb: (key: string) => void };
+type Props = {
+    today: Date,
+    onUpdateBreadCrumb: (key: string) => void
+};
 
 function YearList({ today, onUpdateBreadCrumb }: Props) {
     const [years, setYears] = useState<Year[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -34,13 +38,17 @@ function YearList({ today, onUpdateBreadCrumb }: Props) {
         setYears([...years]);
     }
 
+    function updateBreadCrumb(index: number) {
+        setActiveIndex(index);
+        onUpdateBreadCrumb(index === null ? '' : years[index - 1].key as string);
+    }
+
     return (
         loading
             ? Array.from(yearSkeletonLength(today), (_, i: number) =>
                 (<Skeleton key={i} height="3.5rem" className="my-1" />))
-            : <Accordion
-                onTabOpen={e => onUpdateBreadCrumb(years[e.index - 1].key as string)}
-                onTabClose={() => onUpdateBreadCrumb('')}> {
+            : <Accordion activeIndex={activeIndex}
+                onTabChange={e => updateBreadCrumb(e.index as number)}> {
                     years.map(year => (
                         <AccordionTab key={year.key} header={
                             <div className="w-full flex justify-between font-bold">

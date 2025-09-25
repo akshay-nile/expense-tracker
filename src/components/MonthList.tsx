@@ -17,6 +17,7 @@ type Props = {
 function MonthList({ today, yearKey, onYearTotalChange, onUpdateBreadCrumb }: Props) {
     const [months, setMonths] = useState<Month[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -43,13 +44,17 @@ function MonthList({ today, yearKey, onYearTotalChange, onUpdateBreadCrumb }: Pr
         });
     }
 
+    function updateBreadCrumb(index: number) {
+        setActiveIndex(index);
+        onUpdateBreadCrumb(index === null ? yearKey : months[index - 1].key as string);
+    }
+
     return (
         loading
             ? Array.from(monthSkeletonLength(today, yearKey), (_, i: number) =>
                 (<Skeleton key={i} height="3.5rem" className="my-1" />))
-            : <Accordion
-                onTabOpen={e => onUpdateBreadCrumb(months[e.index - 1].key as string)}
-                onTabClose={() => onUpdateBreadCrumb(yearKey)}> {
+            : <Accordion activeIndex={activeIndex}
+                onTabChange={e => updateBreadCrumb(e.index as number)}> {
                     months.map(month => (
                         <AccordionTab key={month.key} header={
                             <div className="w-full flex justify-between font-semibold">

@@ -4,11 +4,12 @@ import type { Day, TotalChangeEvent } from "../services/models";
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Skeleton } from "primereact/skeleton";
 import { getDaysOfMonth } from "../services/expenses";
-import { addMissingDays, formatShortMonth, formatRupee, daySkeletonLength } from "../services/utilities";
+import { addMissingDays, daySkeletonLength, formatRupee, formatShortMonth } from "../services/utilities";
 import ExpenseList from "./ExpenseList";
 
 type Props = {
-    today: Date, monthKey: string,
+    today: Date,
+    monthKey: string,
     onUpdateBreadCrumb: (key: string) => void,
     onMonthTotalChange: (event: TotalChangeEvent) => void
 };
@@ -16,6 +17,7 @@ type Props = {
 function DayList({ today, monthKey, onMonthTotalChange, onUpdateBreadCrumb }: Props) {
     const [days, setDays] = useState<Day[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -42,13 +44,17 @@ function DayList({ today, monthKey, onMonthTotalChange, onUpdateBreadCrumb }: Pr
         });
     }
 
+    function updateBreadCrumb(index: number) {
+        setActiveIndex(index);
+        onUpdateBreadCrumb(index === null ? monthKey : days[index - 1].key as string);
+    }
+
     return (
         loading
             ? Array.from(daySkeletonLength(today, monthKey), (_, i: number) =>
                 (<Skeleton key={i} height="3.5rem" className="my-1" />))
-            : <Accordion
-                onTabOpen={e => onUpdateBreadCrumb(days[e.index - 1].key as string)}
-                onTabClose={() => onUpdateBreadCrumb(monthKey)}> {
+            : <Accordion activeIndex={activeIndex}
+                onTabChange={e => updateBreadCrumb(e.index as number)}> {
                     days.map(day => (
                         <AccordionTab key={day.key} header={
                             <div className="w-full flex justify-between font-medium">
