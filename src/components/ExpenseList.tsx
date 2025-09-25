@@ -110,7 +110,7 @@ function ExpenseList({ dayKey, onDayTotalChange, onUpdateBreadCrumb }: Props) {
             : <div className="w-full flex flex-col font-normal m-0 p-0">
                 {
                     (editMode ? editExpenses : expenses).length === 0
-                        ? <div className="text-center my-3 text-lg text-gray-300 cursor-pointer"
+                        ? <div className="text-center my-3 text-lg cursor-pointer"
                             onClick={() => !editMode && setupEditMode()}>No Expenses</div>
                         : (editMode ? editExpenses : expenses).map(expense => (
                             <div key={expense.timestamp} className={"flex m-0 my-2 gap-1 text-[16px] " + (editMode ? 'mx-0' : 'mx-2')}>

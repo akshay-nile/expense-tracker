@@ -1,16 +1,23 @@
+import { BreadCrumb } from 'primereact/breadcrumb';
+import { Button } from 'primereact/button';
 import type { MenuItem } from 'primereact/menuitem';
+import { useCallback, useState } from 'react';
 import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import useCurrentTime from './custom-hooks/useCurrentTime';
+import type { Theme } from './services/models';
 import { formatLongDate, formatLongMonth, formatTime, weekdays } from './services/utilities';
-import { BreadCrumb } from 'primereact/breadcrumb';
-import { useCallback, useState } from 'react';
 
-function App() {
+const THEME_KEY = 'expense-tracker-theme';
+type Props = { setAppTheme: (theme: 'light' | 'dark') => void };
+
+function App({ setAppTheme }: Props) {
   const today = useCurrentDate();
   const time = useCurrentTime();
+  const theme = localStorage.getItem(THEME_KEY) as Theme;
 
   const [breadCrumbItems, setBreadCrumbItems] = useState<MenuItem[]>([]);
+  const [isLightTheme, setIsLightTheme] = useState<boolean>(theme ? theme === 'light' : false);
 
   const onUpdateBreadCrumb = useCallback((key: string) => {
     const splits = key.split('/');
@@ -23,19 +30,32 @@ function App() {
     setBreadCrumbItems(items);
   }, []);
 
+  function toggleTheme(theme: boolean) {
+    setAppTheme(theme ? 'light' : 'dark');
+    setIsLightTheme(theme);
+  }
+
   return (
     <div className="flex justify-center">
       <div className="w-full sm:w-2/5">
 
         <div className="w-full font-light tracking-wider mt-6 px-1">
           <div className="flex justify-between items-center mx-3">
-            <div className="text-2xl text-gray-200 cursor-pointer" onClick={() => { }}>
+            <div className="text-2xl cursor-pointer" onClick={() => { }}>
               {weekdays[today.getDay()]}
             </div>
             <div className="text-sm self-start">{formatTime(time)}</div>
           </div>
-          <div className="text-xl mx-3 cursor-pointer" onClick={() => { }}>
-            {formatLongDate(today)}
+
+          <div className="flex justify-between items-center">
+            <div className="text-xl mx-3 cursor-pointer" onClick={() => { }}>
+              {formatLongDate(today)}
+            </div>
+            <div className="mx-4 my-0 mb-1">
+              <Button outlined aria-label="Toggle Theme" className="text-xs"
+                icon={isLightTheme ? 'pi pi-moon' : 'pi pi-sun'}
+                onClick={() => toggleTheme(!isLightTheme)} />
+            </div>
           </div>
         </div>
 

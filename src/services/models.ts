@@ -34,3 +34,5 @@ export interface TotalChangeEvent {
     key: string,
     total: number
 }
+
+export type Theme = 'light' | 'dark';
