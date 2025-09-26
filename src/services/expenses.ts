@@ -3,10 +3,33 @@ import { type Day, type Expense, type Month, type PostResult, type Year } from '
 let baseURL = import.meta.env.VITE_BASE_URL as string;
 let retryCount = 2;
 
+// This wrapper function is used as an interceptor
+async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response | void> {
+    const redirectURL = '/projects/browser-authenticator/index.html';
+    const browserId = localStorage.getItem("browser-id");
+    if (!browserId) {
+        localStorage.setItem('initiator-url', window.location.href);
+        window.location.href = redirectURL;
+        return;
+    }
+
+    const headers = new Headers(init.headers || {});
+    headers.set("X-Browser-ID", browserId);
+
+    const response = await fetch(input, { ...init, headers });
+    if (response.status === 400 || response.status === 401) {
+        localStorage.setItem('initiator-url', window.location.href);
+        window.location.href = redirectURL;
+        return;
+    }
+
+    return response;
+}
+
 async function _fetch(path: string): Promise<[]> {
     try {
-        const response = await fetch(`${baseURL}/expenses${path}`);
-        return await response.json();
+        const response = await fetchWithBrowserId(`${baseURL}/expenses${path}`);
+        return await (response as Response).json();
     } catch (error) {
         console.error(error);
         if (import.meta.env.VITE_WIFI_URL && retryCount-- > 0) {
@@ -35,12 +58,12 @@ export async function getExpensesOfDay(dayKey: string): Promise<Expense[]> {
 
 export async function postExpensesOfDay(expenses: Expense[], dayKey: string): Promise<PostResult | null> {
     try {
-        const response = await fetch(`${baseURL}/expenses${dayKey}`, {
+        const response = await fetchWithBrowserId(`${baseURL}/expenses${dayKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(expenses)
         });
-        return await response.json();
+        return await (response as Response).json();
     } catch (error) { console.error(error); }
     return null;
 }
