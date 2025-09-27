@@ -58,18 +58,18 @@ function App({ setAppTheme }: Props) {
           </div>
 
           <div className="flex">
-            <div className="me-3">
+            <div className="me-3.5">
               <Button icon="pi pi-mobile" outlined
-                size='large' style={{ padding: '0.5rem 0rem' }}
+                size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }}
               />
             </div>
-            <div className="me-3">
+            <div className="me-3.5">
               <Button icon="pi pi-download" outlined
-                size='large' style={{ padding: '0.5rem 0rem' }} />
+                size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }} />
             </div>
             <div className="me-2.5">
               <Button icon={isLightTheme ? 'pi pi-moon' : 'pi pi-sun'} outlined
-                size='large' style={{ padding: '0.5rem 0rem' }}
+                size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }}
                 onClick={() => toggleTheme(!isLightTheme)} />
             </div>
           </div>
