@@ -24,6 +24,12 @@ export interface Expense {
     amount: number;
 }
 
+export interface DailyExpense {
+    date: string;
+    purpose: string;
+    total: number | string;
+}
+
 export interface PostResult {
     inserted: number,
     updated: number,

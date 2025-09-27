@@ -2,11 +2,13 @@ import { BreadCrumb } from 'primereact/breadcrumb';
 import { Button } from 'primereact/button';
 import type { MenuItem } from 'primereact/menuitem';
 import { useCallback, useState } from 'react';
+import { utils, writeFile } from 'xlsx';
 import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import useCurrentTime from './custom-hooks/useCurrentTime';
-import type { Theme } from './services/models';
-import { formatLongDate, formatLongMonth, formatTime, weekdays } from './services/utilities';
+import { getAllExpensesForExport } from './services/expenses';
+import type { DailyExpense, Theme } from './services/models';
+import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, weekdays } from './services/utilities';
 
 const THEME_KEY = 'expense-tracker-theme';
 type Props = { setAppTheme: (theme: Theme) => void };
@@ -16,6 +18,7 @@ function App({ setAppTheme }: Props) {
   const time = useCurrentTime();
   const theme = localStorage.getItem(THEME_KEY) as Theme;
 
+  const [exporting, setExporting] = useState<boolean>(false);
   const [breadCrumbItems, setBreadCrumbItems] = useState<MenuItem[]>([]);
   const [isLightTheme, setIsLightTheme] = useState<boolean>(theme ? theme === 'light' : false);
 
@@ -35,8 +38,31 @@ function App({ setAppTheme }: Props) {
     setIsLightTheme(theme);
   }
 
-  async function goToToday() {
+  async function exportAllToExcelSheet() {
+    setExporting(true);
+    const data = await getAllExpensesForExport();
+
+    const worksheets = data.reduce((sheets, row) => {
+      row.total = formatRupee(row.total as number);
+      const year = row.date.split("-")[0];
+      if (!sheets.has(year)) sheets.set(year, []);
+      sheets.get(year)?.push(row);
+      return sheets;
+    }, new Map<string, DailyExpense[]>());
+
+    const workbook = utils.book_new();
+    for (const [year, expenses] of worksheets) {
+      const worksheet = utils.json_to_sheet(expenses, { header: ['date', 'purpose', 'total'] });
+      utils.sheet_add_aoa(worksheet, [['Date', 'Purpose', 'Total']], { origin: "A1" });
+      utils.book_append_sheet(workbook, worksheet, 'Year ' + year);
+    }
+
+    const filename = `Daily Expenses ${formatISODate(today)}.xlsx`;
+    writeFile(workbook, filename);
+    setExporting(false);
   }
+
+  async function goToToday() { }
 
   return (
     <div className="flex justify-center">
@@ -59,16 +85,17 @@ function App({ setAppTheme }: Props) {
 
           <div className="flex">
             <div className="me-3.5">
-              <Button icon="pi pi-mobile" outlined
+              <Button icon="pi pi-mobile" outlined tooltip='Install as PWA'
                 size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }}
               />
             </div>
             <div className="me-3.5">
-              <Button icon="pi pi-download" outlined
-                size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }} />
+              <Button icon={`pi ${exporting ? 'pi-spin pi-spinner' : 'pi-file-export'}`} outlined
+                size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }}
+                onClick={exportAllToExcelSheet} disabled={exporting} tooltip='Export to Excel' />
             </div>
             <div className="me-2.5">
-              <Button icon={isLightTheme ? 'pi pi-moon' : 'pi pi-sun'} outlined
+              <Button icon={isLightTheme ? 'pi pi-moon' : 'pi pi-sun'} outlined tooltip='Toggle Theme'
                 size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }}
                 onClick={() => toggleTheme(!isLightTheme)} />
             </div>

@@ -123,7 +123,7 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
                                     onClick={() => !editMode && setupEditMode()}
                                     onChange={e => editAmount(e.target.value, expense.timestamp)} />
 
-                                {editMode && <Button icon="pi pi-minus" outlined aria-label="Delete" className="text-xs"
+                                {editMode && <Button icon="pi pi-minus" outlined tooltip="Delete" className="text-xs"
                                     disabled={saving}
                                     onClick={() => deleteEditExpense(expense.timestamp)} />}
                             </div>
@@ -133,15 +133,15 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
                     editMode &&
                     <div className="w-full flex justify-between items-center mt-2 mb-1">
                         <div className="flex gap-3 mx-1">
-                            <Button outlined aria-label="Save" className="text-xs"
+                            <Button outlined tooltip="Save" className="text-xs"
                                 icon={"pi " + (saving ? 'pi-spin pi-spinner' : 'pi-save')}
                                 disabled={editInvalid || saving}
                                 onClick={() => saveEditExpenses()} />
-                            <Button icon="pi pi-times" outlined aria-label="Cancel" className="text-xs"
+                            <Button icon="pi pi-times" outlined tooltip="Cancel" className="text-xs"
                                 onClick={() => clearEditMode()} />
                         </div>
                         <div className="m-0">
-                            <Button icon="pi pi-plus" outlined aria-label="Add" className="text-xs"
+                            <Button icon="pi pi-plus" outlined tooltip="Add" className="text-xs"
                                 disabled={editInvalid || saving}
                                 onClick={() => addNewEditExpense()} />
                         </div>

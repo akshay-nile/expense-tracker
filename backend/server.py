@@ -1,7 +1,7 @@
 from time import sleep
 from flask import Flask, jsonify, request
 from flask_cors import cross_origin
-from services.expenses import get_all_days, get_all_expenses, get_all_months, get_all_years, update_expenses
+from services.expenses import export_all_expenses, get_all_days, get_all_expenses, get_all_months, get_all_years, update_expenses
 
 app = Flask(__name__)
 
@@ -14,6 +14,8 @@ app = Flask(__name__)
 def expense_tracker(year=None, month=None, day=None):
     # sleep(2)
     if request.method == 'GET':
+        if (request.args.get('export') == 'true'):
+            return jsonify(export_all_expenses())
         if year is None:
             return jsonify(get_all_years())
         if month is None:
