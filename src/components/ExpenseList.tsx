@@ -30,10 +30,8 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
     }, [dayKey]);
 
     function onSave(savedExpenses: Expense[]) {
-        onDayTotalChange({
-            key: dayKey,
-            total: savedExpenses.map(expense => expense.amount).reduce((a, b) => a + b, 0)
-        });
+        const total = savedExpenses.map(expense => expense.amount).reduce((a, b) => a + b, 0);
+        onDayTotalChange({ key: dayKey, total });
         setExpenses(savedExpenses);
         setEditMode(false);
     }

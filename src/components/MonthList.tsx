@@ -38,10 +38,8 @@ function MonthList({ today, yearKey, onYearTotalChange, onUpdateBreadCrumb }: Pr
         if (!targetMonth) throw new Error('No targetMonth found for monthKey: ' + event.key);
         targetMonth.total = event.total;
         setMonths([...months]);
-        onYearTotalChange({
-            key: yearKey,
-            total: months.map(month => month.total).reduce((a, b) => a + b, 0)
-        });
+        const total = months.map(month => month.total).reduce((a, b) => a + b, 0);
+        onYearTotalChange({ key: yearKey, total });
     }
 
     function updateBreadCrumb(index: number) {

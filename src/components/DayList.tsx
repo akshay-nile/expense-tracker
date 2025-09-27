@@ -38,10 +38,8 @@ function DayList({ today, monthKey, onMonthTotalChange, onUpdateBreadCrumb }: Pr
         if (!targetDay) throw new Error('No targetDay found for dayKey: ' + event.key);
         targetDay.total = event.total;
         setDays([...days]);
-        onMonthTotalChange({
-            key: monthKey,
-            total: days.map(day => day.total).reduce((a, b) => a + b, 0)
-        });
+        const total = days.map(day => day.total).reduce((a, b) => a + b, 0);
+        onMonthTotalChange({ key: monthKey, total });
     }
 
     function updateBreadCrumb(index: number) {

@@ -44,9 +44,10 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
     }
 
     function addNewEditExpense() {
-        editExpenses.push({ timestamp: Date.now(), purpose: 'Miscs', amount: '0' });
-        setEditExpenses([...editExpenses]);
+        const newEditExpense = { timestamp: Date.now(), purpose: 'Miscs', amount: '' };
+        setEditExpenses([...editExpenses, newEditExpense]);
         setInvalid(true);
+        bringIntoFocus('amount-' + newEditExpense.timestamp);
     }
 
     function deleteEditExpense(timestamp: number) {
@@ -61,17 +62,23 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
         return editExpense;
     }
 
+    function bringIntoFocus(id: string) {
+        setTimeout(() => {
+            const inputField = document.getElementById(id) as HTMLInputElement;
+            if (inputField) inputField.focus();
+        }, 1);
+    }
+
     async function saveEditExpenses() {
-        if (saving) {
-            console.warn('Already Saving:', saving);
-            return;
-        }
         if (editExpenses.some(isInvalidEditExpense)) {
             console.error('Invalid Expense Found:', editExpenses);
+            setInvalid(true);
             return;
         }
-        if (notUnique(editExpenses.map(expense => expense.purpose))) {
-            console.error('Duplicate Purpose Found:', editExpenses);
+        const purposes = editExpenses.map(expense => expense.purpose);
+        if (notUnique(purposes)) {
+            console.error('Duplicate Purpose Found:', purposes);
+            setInvalid(true);
             return;
         }
         setSaving(true);
@@ -89,10 +96,12 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
                     : editExpenses.map(expense => (
                         <div key={expense.timestamp} className="flex m-0 my-2 gap-1 text-[16px] mx-0">
                             <input type="text" placeholder="Purpose" className="w-full p-0 px-2 m-0 rounded-sm flex-6"
-                                value={expense.purpose} onChange={e => editPurpose(e.target.value, expense.timestamp)} />
+                                value={expense.purpose} onChange={e => editPurpose(e.target.value, expense.timestamp)}
+                                id={'purpose-' + expense.timestamp.toString()} />
 
                             <input type="tel" placeholder="Amount" className="w-full p-0 px-2 m-0 rounded-sm text-right flex-2"
-                                value={expense.amount} onChange={e => editAmount(e.target.value, expense.timestamp)} />
+                                value={expense.amount} onChange={e => editAmount(e.target.value, expense.timestamp)}
+                                id={'amount-' + expense.timestamp.toString()} />
 
                             <Button icon="pi pi-minus" outlined className="text-xs"
                                 disabled={saving} tooltip="Delete" tooltipOptions={{ position: 'left' }}
