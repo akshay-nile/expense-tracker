@@ -69,34 +69,31 @@ function App({ setAppTheme }: Props) {
       <div className="w-full sm:w-2/5">
 
         <div className="flex justify-between items-center mt-4">
-          <div className="flex flex-col font-light ms-3" onClick={goToToday}>
+          <div className="flex flex-col font-light ms-3 cursor-pointer" onClick={goToToday}>
             <div className="flex">
-              <div className="text-2xl cursor-pointer">
-                {weekdays[today.getDay()]}
-              </div>
-              <div className="w-full text-sm text-center self-end">
-                {formatTime(time)}
-              </div>
+              <div className="text-2xl">{weekdays[today.getDay()]}</div>
+              <div className="w-full text-sm text-center self-end">{formatTime(time)}</div>
             </div>
-            <div className="text-xl self-start cursor-pointer">
-              {formatLongDate(today)}
-            </div>
+            <div className="text-xl self-start">{formatLongDate(today)}</div>
           </div>
 
           <div className="flex">
             <div className="me-3.5">
-              <Button icon="pi pi-mobile" outlined tooltip='Install as PWA'
+              <Button icon="pi pi-mobile" outlined
+                tooltip='Install as PWA' tooltipOptions={{ position: 'left' }}
                 size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }}
               />
             </div>
             <div className="me-3.5">
               <Button icon={`pi ${exporting ? 'pi-spin pi-spinner' : 'pi-file-export'}`} outlined
                 size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }}
-                onClick={exportAllToExcelSheet} disabled={exporting} tooltip='Export to Excel' />
+                tooltip='Export to Excel' tooltipOptions={{ position: 'left' }}
+                onClick={exportAllToExcelSheet} disabled={exporting} />
             </div>
             <div className="me-2.5">
-              <Button icon={isLightTheme ? 'pi pi-moon' : 'pi pi-sun'} outlined tooltip='Toggle Theme'
+              <Button icon={isLightTheme ? 'pi pi-moon' : 'pi pi-sun'} outlined
                 size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }}
+                tooltip={`${isLightTheme ? 'Dark' : 'Light'} Theme`} tooltipOptions={{ position: 'left' }}
                 onClick={() => toggleTheme(!isLightTheme)} />
             </div>
           </div>

@@ -38,7 +38,7 @@ export function formatShortMonth(month: string): string {
 
 export function formatTime(time: Date): string {
     const hours24 = time.getHours();
-    const hours12 = (hours24 % 12 || 12).toString().padStart(2, '0');
+    const hours12 = (hours24 % 12 || 12);
     const minutes = time.getMinutes().toString().padStart(2, '0');
     return `${hours12}:${minutes} ${hours24 >= 12 ? 'PM' : 'AM'}`;
 }
