@@ -7,14 +7,16 @@ let retryCount = 2;
 async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response | void> {
     const redirectURL = '/projects/browser-authenticator/index.html';
     const browserId = localStorage.getItem("browser-id");
-    if (!browserId) {
+    const isProd = input.toString().startsWith('https');
+
+    if (isProd && !browserId) {
         localStorage.setItem('initiator-url', window.location.href);
         window.location.href = redirectURL;
         return;
     }
 
     const headers = new Headers(init.headers || {});
-    headers.set("X-Browser-ID", browserId);
+    if (browserId) headers.set("X-Browser-ID", browserId);
 
     const response = await fetch(input, { ...init, headers });
     if (response.status === 400 || response.status === 401) {

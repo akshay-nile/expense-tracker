@@ -13,7 +13,7 @@ input::-webkit-inner-spin-button {
 }
 
 .p-accordion-content {
-    padding: 0.7em;
+    padding: 0.5rem;
     margin: 0;
 }
 
@@ -24,7 +24,7 @@ input::-webkit-inner-spin-button {
     width: 2.10em !important;
 }
 
-.p-button.text-xs:focus {
+.p-button:focus {
     box-shadow: none !important;
 }
 

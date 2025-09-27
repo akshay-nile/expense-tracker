@@ -8,11 +8,10 @@ import { formatRupee } from "../services/utilities";
 
 type Props = {
     dayKey: string,
-    onUpdateBreadCrumb: (key: string) => void,
     onDayTotalChange: (event: TotalChangeEvent) => void
 };
 
-function ExpenseList({ dayKey, onDayTotalChange, onUpdateBreadCrumb }: Props) {
+function ExpenseList({ dayKey, onDayTotalChange }: Props) {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [saving, setSaving] = useState<boolean>(false);
@@ -26,12 +25,11 @@ function ExpenseList({ dayKey, onDayTotalChange, onUpdateBreadCrumb }: Props) {
                 setLoading(true);
                 const data = await getExpensesOfDay(dayKey);
                 setExpenses(data);
-                onUpdateBreadCrumb(dayKey + "/₹");
             }
             catch (error) { console.error(error); }
             finally { setLoading(false); }
         })();
-    }, [dayKey, onUpdateBreadCrumb]);
+    }, [dayKey]);
 
     function setupEditMode() {
         expenses.forEach(expense => editExpenses.push({
@@ -41,7 +39,6 @@ function ExpenseList({ dayKey, onDayTotalChange, onUpdateBreadCrumb }: Props) {
         }));
         setEditExpenses([...editExpenses]);
         setEditMode(true);
-        onUpdateBreadCrumb(dayKey + "/'₹'");
     }
 
     function clearEditMode() {
@@ -49,7 +46,6 @@ function ExpenseList({ dayKey, onDayTotalChange, onUpdateBreadCrumb }: Props) {
         setSaving(false);
         setEditMode(false);
         setEditInvalid(false);
-        onUpdateBreadCrumb(dayKey + "/₹");
     }
 
     function isValidExpense(expense: Expense): boolean {
@@ -127,7 +123,7 @@ function ExpenseList({ dayKey, onDayTotalChange, onUpdateBreadCrumb }: Props) {
                                     onClick={() => !editMode && setupEditMode()}
                                     onChange={e => editAmount(e.target.value, expense.timestamp)} />
 
-                                {editMode && <Button icon="pi pi-minus" rounded outlined aria-label="Delete" className="text-xs"
+                                {editMode && <Button icon="pi pi-minus" outlined aria-label="Delete" className="text-xs"
                                     disabled={saving}
                                     onClick={() => deleteEditExpense(expense.timestamp)} />}
                             </div>
@@ -137,15 +133,15 @@ function ExpenseList({ dayKey, onDayTotalChange, onUpdateBreadCrumb }: Props) {
                     editMode &&
                     <div className="w-full flex justify-between items-center mt-2 mb-1">
                         <div className="flex gap-3 mx-1">
-                            <Button rounded outlined aria-label="Save" className="text-xs"
+                            <Button outlined aria-label="Save" className="text-xs"
                                 icon={"pi " + (saving ? 'pi-spin pi-spinner' : 'pi-save')}
                                 disabled={editInvalid || saving}
                                 onClick={() => saveEditExpenses()} />
-                            <Button icon="pi pi-times" rounded outlined aria-label="Cancel" className="text-xs"
+                            <Button icon="pi pi-times" outlined aria-label="Cancel" className="text-xs"
                                 onClick={() => clearEditMode()} />
                         </div>
                         <div className="m-0">
-                            <Button icon="pi pi-plus" rounded outlined aria-label="Add" className="text-xs"
+                            <Button icon="pi pi-plus" outlined aria-label="Add" className="text-xs"
                                 disabled={editInvalid || saving}
                                 onClick={() => addNewEditExpense()} />
                         </div>

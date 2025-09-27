@@ -4,12 +4,12 @@ import { PrimeReactProvider } from 'primereact/api';
 import App from './App.tsx';
 import './index.css';
 
-// import 'primereact/resources/themes/lara-dark-cyan/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import type { Theme } from './services/models.ts';
 
 const THEME_KEY = 'expense-tracker-theme';
+if (THEME_KEY in localStorage) setAppTheme(localStorage.getItem(THEME_KEY) as Theme);
 
 function setAppTheme(theme: Theme) {
   const appTheme = document.getElementById('app-theme') as HTMLLinkElement;
@@ -18,8 +18,6 @@ function setAppTheme(theme: Theme) {
   localStorage.setItem(THEME_KEY, theme);
 }
 
-const theme = localStorage.getItem(THEME_KEY);
-if (theme) setAppTheme(theme as Theme);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

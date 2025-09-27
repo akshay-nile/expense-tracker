@@ -9,7 +9,7 @@ import type { Theme } from './services/models';
 import { formatLongDate, formatLongMonth, formatTime, weekdays } from './services/utilities';
 
 const THEME_KEY = 'expense-tracker-theme';
-type Props = { setAppTheme: (theme: 'light' | 'dark') => void };
+type Props = { setAppTheme: (theme: Theme) => void };
 
 function App({ setAppTheme }: Props) {
   const today = useCurrentDate();
@@ -35,40 +35,52 @@ function App({ setAppTheme }: Props) {
     setIsLightTheme(theme);
   }
 
+  async function goToToday() {
+  }
+
   return (
     <div className="flex justify-center">
       <div className="w-full sm:w-2/5">
 
-        <div className="w-full font-light tracking-wider mt-6 px-1">
-          <div className="flex justify-between items-center mx-3">
-            <div className="text-2xl cursor-pointer" onClick={() => { }}>
-              {weekdays[today.getDay()]}
+        <div className="flex justify-between items-center mt-4">
+          <div className="flex flex-col font-light ms-3" onClick={goToToday}>
+            <div className="flex">
+              <div className="text-2xl cursor-pointer">
+                {weekdays[today.getDay()]}
+              </div>
+              <div className="w-full text-sm text-center self-end">
+                {formatTime(time)}
+              </div>
             </div>
-            <div className="text-sm self-start">{formatTime(time)}</div>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <div className="text-xl mx-3 cursor-pointer" onClick={() => { }}>
+            <div className="text-xl self-start cursor-pointer">
               {formatLongDate(today)}
             </div>
-            <div className="mx-4 my-0 mb-1">
-              <Button outlined aria-label="Toggle Theme" className="text-xs"
-                icon={isLightTheme ? 'pi pi-moon' : 'pi pi-sun'}
+          </div>
+
+          <div className="flex">
+            <div className="me-3">
+              <Button icon="pi pi-mobile" outlined
+                size='large' style={{ padding: '0.5rem 0rem' }}
+              />
+            </div>
+            <div className="me-3">
+              <Button icon="pi pi-download" outlined
+                size='large' style={{ padding: '0.5rem 0rem' }} />
+            </div>
+            <div className="me-2.5">
+              <Button icon={isLightTheme ? 'pi pi-moon' : 'pi pi-sun'} outlined
+                size='large' style={{ padding: '0.5rem 0rem' }}
                 onClick={() => toggleTheme(!isLightTheme)} />
             </div>
           </div>
         </div>
 
-        <div className="my-4 mb-5 mx-2.25 p-0">
+        <div className="my-4 mb-5 mx-2.5 p-0">
           <BreadCrumb model={breadCrumbItems} home={{ icon: 'pi pi-home' }}
-            style={{
-              fontWeight: '350', height: '3em',
-              fontSize: breadCrumbItems.length > 2 ? '14px' : '15px',
-              padding: breadCrumbItems.length > 2 ? '0.8em' : '1.2em'
-            }} />
+            style={{ fontWeight: '350', fontSize: '0.99rem' }} />
         </div>
 
-        <div className="my-4 mx-2.25">
+        <div className="my-4 mx-2.5">
           <YearList today={today}
             onUpdateBreadCrumb={onUpdateBreadCrumb} />
         </div>

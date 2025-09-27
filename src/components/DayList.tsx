@@ -64,8 +64,7 @@ function DayList({ today, monthKey, onMonthTotalChange, onUpdateBreadCrumb }: Pr
                         }>
                             <div>
                                 <ExpenseList dayKey={day.key as string}
-                                    onDayTotalChange={onDayTotalChange}
-                                    onUpdateBreadCrumb={onUpdateBreadCrumb} />
+                                    onDayTotalChange={onDayTotalChange} />
                             </div>
                         </AccordionTab>
                     ))
