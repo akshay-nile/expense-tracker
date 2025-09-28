@@ -32,6 +32,10 @@ input::-webkit-inner-spin-button {
     box-shadow: none !important;
 }
 
+.p-toast-center {
+    width: 90%;
+}
+
 .sticky-top {
     position: sticky;
     top: 0px;

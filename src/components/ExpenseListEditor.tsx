@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { EditExpense, Expense } from "../services/models";
 
 import { Button } from "primereact/button";
 import { postExpensesOfDay } from "../services/expenses";
+import { toastMessage } from "../services/utilities";
 
 type Props = {
     dayKey: string,
     expenses: Expense[],
-    onSave: (expenses: Expense[]) => void,
     onCancel: () => void
+    onSave: (expenses: Expense[]) => void,
 };
 
 function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
@@ -17,6 +18,8 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
     const toExpense = (e: EditExpense) => ({ ...e, amount: toTotal(e.amount) || 0 } as Expense);
     const notParsable = (a: string) => a.split('+').map(s => s.trim()).some(n => n.length === 0 || isNaN(Number(n)) || parseInt(n) <= 0);
     const notUnique = (pa: string[]) => new Set(pa.map(s => s.trim().toLowerCase())).size !== pa.length;
+
+    const lastInputRef = useRef<HTMLInputElement>(null);
 
     const [editExpenses, setEditExpenses] = useState<EditExpense[]>(expenses.map(toEditExpense));
     const [saving, setSaving] = useState<boolean>(false);
@@ -47,7 +50,7 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
         const newEditExpense = { timestamp: Date.now(), purpose: 'Miscs', amount: '' };
         setEditExpenses([...editExpenses, newEditExpense]);
         setInvalid(true);
-        bringIntoFocus('amount-' + newEditExpense.timestamp);
+        setTimeout(() => lastInputRef.current?.focus(), 0);
     }
 
     function deleteEditExpense(timestamp: number) {
@@ -62,29 +65,33 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
         return editExpense;
     }
 
-    function bringIntoFocus(id: string) {
-        setTimeout(() => {
-            const inputField = document.getElementById(id) as HTMLInputElement;
-            if (inputField) inputField.focus();
-        }, 1);
-    }
-
     async function saveEditExpenses() {
         if (editExpenses.some(isInvalidEditExpense)) {
             console.error('Invalid Expense Found:', editExpenses);
+            toastMessage.show({
+                severity: 'error', summary: 'Invalid Expense!',
+                detail: 'Some expense is unacceptable and cannot be saved'
+            });
             setInvalid(true);
             return;
         }
         const purposes = editExpenses.map(expense => expense.purpose);
         if (notUnique(purposes)) {
             console.error('Duplicate Purpose Found:', purposes);
+            toastMessage.show({
+                severity: 'error', summary: 'Duplicate Purpose!',
+                detail: 'All the expenses should have unique Purpose fields'
+            });
             setInvalid(true);
             return;
         }
         setSaving(true);
         const expensesToSave = editExpenses.map(toExpense);
         const status = await postExpensesOfDay(expensesToSave, dayKey);
-        console.log(status);
+        toastMessage.show({
+            severity: 'success', summary: 'Expenses Saved!',
+            detail: `Added: ${status?.inserted} Updated: ${status?.updated} Deleted: ${status?.deleted}`
+        });
         onSave(expensesToSave);
     }
 
@@ -96,12 +103,11 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
                     : editExpenses.map(expense => (
                         <div key={expense.timestamp} className="flex m-0 my-2 gap-1 text-[16px] mx-0">
                             <input type="text" placeholder="Purpose" className="w-full p-0 px-2 m-0 rounded-sm flex-6"
-                                value={expense.purpose} onChange={e => editPurpose(e.target.value, expense.timestamp)}
-                                id={'purpose-' + expense.timestamp.toString()} />
+                                value={expense.purpose} onChange={e => editPurpose(e.target.value, expense.timestamp)} />
 
                             <input type="tel" placeholder="Amount" className="w-full p-0 px-2 m-0 rounded-sm text-right flex-2"
                                 value={expense.amount} onChange={e => editAmount(e.target.value, expense.timestamp)}
-                                id={'amount-' + expense.timestamp.toString()} />
+                                ref={lastInputRef} />
 
                             <Button icon="pi pi-minus" outlined className="text-xs"
                                 disabled={saving} tooltip="Delete" tooltipOptions={{ position: 'left' }}

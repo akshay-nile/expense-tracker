@@ -1,14 +1,15 @@
 import { BreadCrumb } from 'primereact/breadcrumb';
 import { Button } from 'primereact/button';
 import type { MenuItem } from 'primereact/menuitem';
-import { useCallback, useState } from 'react';
+import { Toast } from 'primereact/toast';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { utils, writeFile } from 'xlsx';
 import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import useCurrentTime from './custom-hooks/useCurrentTime';
 import { getAllExpensesForExport } from './services/expenses';
 import type { DailyExpense, Theme } from './services/models';
-import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, weekdays } from './services/utilities';
+import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, registerToastRef, toastMessage, weekdays } from './services/utilities';
 
 const THEME_KEY = 'expense-tracker-theme';
 type Props = { setAppTheme: (theme: Theme) => void };
@@ -16,11 +17,14 @@ type Props = { setAppTheme: (theme: Theme) => void };
 function App({ setAppTheme }: Props) {
   const today = useCurrentDate();
   const time = useCurrentTime();
+  const toastRef = useRef<Toast>(null);
   const theme = localStorage.getItem(THEME_KEY) as Theme;
 
   const [exporting, setExporting] = useState<boolean>(false);
   const [breadCrumbItems, setBreadCrumbItems] = useState<MenuItem[]>([]);
   const [isLightTheme, setIsLightTheme] = useState<boolean>(theme ? theme === 'light' : false);
+
+  useEffect(() => { if (toastRef.current) registerToastRef(toastRef.current); }, []);
 
   const onUpdateBreadCrumb = useCallback((key: string) => {
     const splits = key.split('/');
@@ -37,6 +41,9 @@ function App({ setAppTheme }: Props) {
     const newIsLightTheme = !isLightTheme;
     setAppTheme(newIsLightTheme ? 'light' : 'dark');
     setIsLightTheme(newIsLightTheme);
+    toastMessage.show({
+      severity: 'info', summary: `${newIsLightTheme ? 'Light' : 'Dark'} Theme Applied!`
+    });
   }
 
   async function exportAllToExcelSheet() {
@@ -58,9 +65,13 @@ function App({ setAppTheme }: Props) {
       utils.book_append_sheet(workbook, worksheet, 'Year ' + year);
     }
 
-    const filename = `Daily Expenses ${formatISODate(today)}.xlsx`;
+    const filename = `Daily_Expenses_${formatISODate(today)}.xlsx`;
     writeFile(workbook, filename);
     setExporting(false);
+    toastMessage.show({
+      severity: 'success', summary: 'Exported Successfully!',
+      detail: `Excel file "${filename}" is available for download`
+    });
   }
 
   async function goToToday() { }
@@ -111,6 +122,8 @@ function App({ setAppTheme }: Props) {
           <YearList today={today}
             onUpdateBreadCrumb={onUpdateBreadCrumb} />
         </div>
+
+        <Toast ref={toastRef} position="center" />
 
       </div>
     </div>
