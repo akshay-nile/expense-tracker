@@ -2,7 +2,7 @@ import { BreadCrumb } from 'primereact/breadcrumb';
 import { Button } from 'primereact/button';
 import type { MenuItem } from 'primereact/menuitem';
 import { Toast } from 'primereact/toast';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { utils, writeFile } from 'xlsx';
 import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
@@ -18,14 +18,11 @@ type Props = { setAppTheme: (theme: Theme) => void };
 function App({ setAppTheme }: Props) {
   const today = useCurrentDate();
   const time = useCurrentTime();
-  const toastRef = useRef<Toast>(null);
   const theme = localStorage.getItem(THEME_KEY) as Theme;
 
   const [exporting, setExporting] = useState<boolean>(false);
   const [breadCrumbItems, setBreadCrumbItems] = useState<MenuItem[]>([]);
   const [isLightTheme, setIsLightTheme] = useState<boolean>(theme ? theme === 'light' : false);
-
-  useEffect(() => { if (toastRef.current) registerToastRef(toastRef.current); }, []);
 
   const onUpdateBreadCrumb = useCallback((key: string) => {
     const splits = key.split('/');
@@ -71,7 +68,7 @@ function App({ setAppTheme }: Props) {
     setExporting(false);
     toastMessage.show({
       severity: 'success', summary: 'Exported Successfully!',
-      detail: `Excel file "${filename}" is available for download`
+      detail: 'Excel file is ready for the download'
     });
   }
 
@@ -144,7 +141,7 @@ function App({ setAppTheme }: Props) {
             onUpdateBreadCrumb={onUpdateBreadCrumb} />
         </div>
 
-        <Toast ref={toastRef} position="center" />
+        <Toast ref={registerToastRef} position="center" />
 
       </div>
     </div>
