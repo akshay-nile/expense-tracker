@@ -8,8 +8,9 @@ import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import useCurrentTime from './custom-hooks/useCurrentTime';
 import { getAllExpensesForExport } from './services/expenses';
+import { dayListReady, expenseListReady, monthListReady, registerToastRef, toastMessage, yearListReady } from './services/intercom';
 import type { DailyExpense, Theme } from './services/models';
-import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, registerToastRef, toastMessage, weekdays } from './services/utilities';
+import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, weekdays } from './services/utilities';
 
 const THEME_KEY = 'expense-tracker-theme';
 type Props = { setAppTheme: (theme: Theme) => void };
@@ -74,7 +75,27 @@ function App({ setAppTheme }: Props) {
     });
   }
 
-  async function goToToday() { }
+  async function goToToday() {
+    const onYearListReady = await yearListReady.promise;
+    onYearListReady();
+    yearListReady.reset();
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+
+    const onMonthListReady = await monthListReady.promise;
+    onMonthListReady();
+    monthListReady.reset();
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+
+    const onDayListReady = await dayListReady.promise;
+    onDayListReady();
+    dayListReady.reset();
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+
+    const onExpenseListReady = await expenseListReady.promise;
+    onExpenseListReady();
+    expenseListReady.reset();
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }
 
   return (
     <div className="flex justify-center">

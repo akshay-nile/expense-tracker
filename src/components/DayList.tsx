@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Day, TotalChangeEvent } from "../services/models";
 
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Skeleton } from "primereact/skeleton";
 import { getDaysOfMonth } from "../services/expenses";
+import { dayListReady } from "../services/intercom";
 import { addMissingDays, daySkeletonLength, formatRupee, formatShortMonth } from "../services/utilities";
 import ExpenseList from "./ExpenseList";
 
@@ -42,10 +43,14 @@ function DayList({ today, monthKey, onMonthTotalChange, onUpdateBreadCrumb }: Pr
         onMonthTotalChange({ key: monthKey, total });
     }
 
-    function updateBreadCrumb(index: number) {
+    const updateBreadCrumb = useCallback((index: number) => {
         setActiveIndex(index);
-        onUpdateBreadCrumb(index === null ? monthKey : days[index - 1].key as string);
-    }
+        onUpdateBreadCrumb(index === null ? '' : days[index - 1]?.key as string);
+    }, [days, onUpdateBreadCrumb]);
+
+    useEffect(() => {
+        if (days.length > 0) dayListReady.register(() => updateBreadCrumb(days.length));
+    }, [days, updateBreadCrumb]);
 
     return (
         loading

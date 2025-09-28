@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { TotalChangeEvent, Year } from "../services/models";
 
 import { Accordion, AccordionTab } from 'primereact/accordion';
@@ -6,6 +6,7 @@ import { Skeleton } from "primereact/skeleton";
 import { getYears } from "../services/expenses";
 import { addMissingYears, formatRupee, yearSkeletonLength } from "../services/utilities";
 import MonthList from "./MonthList";
+import { yearListReady } from "../services/intercom";
 
 type Props = {
     today: Date,
@@ -38,10 +39,14 @@ function YearList({ today, onUpdateBreadCrumb }: Props) {
         setYears([...years]);
     }
 
-    function updateBreadCrumb(index: number) {
+    const updateBreadCrumb = useCallback((index: number) => {
         setActiveIndex(index);
-        onUpdateBreadCrumb(index === null ? '' : years[index - 1].key as string);
-    }
+        onUpdateBreadCrumb(index === null ? '' : years[index - 1]?.key as string);
+    }, [years, onUpdateBreadCrumb]);
+
+    useEffect(() => {
+        if (years.length > 0) yearListReady.register(() => updateBreadCrumb(years.length));
+    }, [years, updateBreadCrumb]);
 
     return (
         loading

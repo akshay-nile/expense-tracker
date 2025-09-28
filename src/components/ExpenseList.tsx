@@ -5,12 +5,12 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { getExpensesOfDay } from "../services/expenses";
 import { formatRupee } from "../services/utilities";
 import ExpenseListEditor from "./ExpenseListEditor";
+import { expenseListReady } from "../services/intercom";
 
 type Props = {
     dayKey: string,
     onDayTotalChange: (event: TotalChangeEvent) => void
 };
-
 
 function ExpenseList({ dayKey, onDayTotalChange }: Props) {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -36,15 +36,13 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
         setEditMode(false);
     }
 
-    function onCancel() {
-        setEditMode(false);
-    }
+    useEffect(() => expenseListReady.register(() => { }), []);
 
     return (
         loading
             ? <ProgressSpinner style={{ width: '100%', height: '3em' }} strokeWidth="0.3em" animationDuration="0.5s" aria-label="Loading" />
             : editMode
-                ? <ExpenseListEditor dayKey={dayKey} expenses={expenses} onSave={onSave} onCancel={onCancel} />
+                ? <ExpenseListEditor dayKey={dayKey} expenses={expenses} onSave={onSave} onCancel={() => setEditMode(false)} />
                 : <div className="w-full flex flex-col font-normal m-0 p-0">
                     {
                         expenses.length === 0
