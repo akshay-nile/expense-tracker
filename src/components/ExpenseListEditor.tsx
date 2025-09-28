@@ -3,7 +3,7 @@ import type { EditExpense, Expense } from "../services/models";
 
 import { Button } from "primereact/button";
 import { postExpensesOfDay } from "../services/expenses";
-import { toastMessage } from "../services/intercom";
+import { toastMessage } from "../services/utilities";
 
 type Props = {
     dayKey: string,

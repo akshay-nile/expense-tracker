@@ -1,19 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { TotalChangeEvent, Year } from "../services/models";
 
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Skeleton } from "primereact/skeleton";
 import { getYears } from "../services/expenses";
-import { addMissingYears, formatRupee, yearSkeletonLength } from "../services/utilities";
+import { addMissingYears, breadCrumbUpdater, formatRupee, yearSkeletonLength } from "../services/utilities";
 import MonthList from "./MonthList";
-import { yearListReady } from "../services/intercom";
 
 type Props = {
     today: Date,
-    onUpdateBreadCrumb: (key: string) => void
+    jumpTrigger: boolean
 };
 
-function YearList({ today, onUpdateBreadCrumb }: Props) {
+function YearList({ today, jumpTrigger }: Props) {
     const [years, setYears] = useState<Year[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -39,14 +38,18 @@ function YearList({ today, onUpdateBreadCrumb }: Props) {
         setYears([...years]);
     }
 
-    const updateBreadCrumb = useCallback((index: number) => {
+    function updateBreadCrumb(index: number) {
         setActiveIndex(index);
-        onUpdateBreadCrumb(index === null ? '' : years[index - 1]?.key as string);
-    }, [years, onUpdateBreadCrumb]);
+        breadCrumbUpdater(index === null ? '' : years[index - 1]?.key as string);
+    }
 
     useEffect(() => {
-        if (years.length > 0) yearListReady.register(() => updateBreadCrumb(years.length));
-    }, [years, updateBreadCrumb]);
+        if (!jumpTrigger) return;
+        if (years.length > 0) {
+            setActiveIndex(today.getFullYear() - 2025 + 1);
+            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 250);
+        }
+    }, [jumpTrigger, years, today]);
 
     return (
         loading
@@ -63,8 +66,8 @@ function YearList({ today, onUpdateBreadCrumb }: Props) {
                         }>
                             <div>
                                 <MonthList today={today} yearKey={year.key as string}
-                                    onYearTotalChange={onYearTotalChange}
-                                    onUpdateBreadCrumb={onUpdateBreadCrumb} />
+                                    jumpTrigger={jumpTrigger}
+                                    onYearTotalChange={onYearTotalChange} />
                             </div>
                         </AccordionTab>
                     ))

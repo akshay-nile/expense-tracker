@@ -8,9 +8,8 @@ import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import useCurrentTime from './custom-hooks/useCurrentTime';
 import { getAllExpensesForExport } from './services/expenses';
-import { dayListReady, expenseListReady, monthListReady, registerToastRef, toastMessage, yearListReady } from './services/intercom';
 import type { DailyExpense, Theme } from './services/models';
-import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, weekdays } from './services/utilities';
+import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, registerToastRef, setBreadCrumbUpdater, toastMessage, weekdays } from './services/utilities';
 
 const THEME_KEY = 'expense-tracker-theme';
 type Props = { setAppTheme: (theme: Theme) => void };
@@ -23,15 +22,15 @@ function App({ setAppTheme }: Props) {
   const [exporting, setExporting] = useState<boolean>(false);
   const [breadCrumbItems, setBreadCrumbItems] = useState<MenuItem[]>([]);
   const [isLightTheme, setIsLightTheme] = useState<boolean>(theme ? theme === 'light' : false);
+  const [jumpTrigger, setJumpTrigger] = useState<boolean>(false);
 
-  const onUpdateBreadCrumb = useCallback((key: string) => {
+  const updateBreadCrumb = useCallback((key: string) => {
     const splits = key.split('/');
     const items: MenuItem[] = [];
     if (splits.length < 2) { setBreadCrumbItems([]); return; }
     if (splits.length >= 2) items.push({ label: 'Year ' + splits[1] });
     if (splits.length >= 3) items.push({ label: formatLongMonth(splits[2]) });
     if (splits.length >= 4) items.push({ label: 'Day ' + parseInt(splits[3]) });
-    if (splits.length >= 5) items.push({ label: splits[4] });
     setBreadCrumbItems(items);
   }, []);
 
@@ -72,26 +71,11 @@ function App({ setAppTheme }: Props) {
     });
   }
 
-  async function goToToday() {
-    const onYearListReady = await yearListReady.promise;
-    onYearListReady();
-    yearListReady.reset();
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-
-    const onMonthListReady = await monthListReady.promise;
-    onMonthListReady();
-    monthListReady.reset();
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-
-    const onDayListReady = await dayListReady.promise;
-    onDayListReady();
-    dayListReady.reset();
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-
-    const onExpenseListReady = await expenseListReady.promise;
-    onExpenseListReady();
-    expenseListReady.reset();
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  function jumpToToday() {
+    if (jumpTrigger) return;
+    setJumpTrigger(true);
+    setTimeout(() => setJumpTrigger(false), 1000);
+    updateBreadCrumb('/' + formatISODate(today).replaceAll('-', '/'));
   }
 
   return (
@@ -100,7 +84,7 @@ function App({ setAppTheme }: Props) {
 
         <div className='sticky-top'>
           <div className="flex justify-between items-center">
-            <div className="flex flex-col font-light ms-3 cursor-pointer" onClick={goToToday}>
+            <div className="flex flex-col font-light ms-3 cursor-pointer" onClick={jumpToToday}>
               <div className="flex">
                 <div className="text-2xl">{weekdays[today.getDay()]}</div>
                 <div className="w-full text-sm text-center self-end">{formatTime(time)}</div>
@@ -132,13 +116,14 @@ function App({ setAppTheme }: Props) {
 
           <div className="mt-4 mx-2.5">
             <BreadCrumb model={breadCrumbItems} home={{ icon: 'pi pi-home' }}
-              style={{ fontWeight: '350', fontSize: '0.99rem' }} />
+              style={{ fontWeight: '350', fontSize: '0.99rem' }}
+              ref={() => { setBreadCrumbUpdater(updateBreadCrumb); }} />
           </div>
         </div>
 
         <div className="mb-4 mx-2.5">
           <YearList today={today}
-            onUpdateBreadCrumb={onUpdateBreadCrumb} />
+            jumpTrigger={jumpTrigger} />
         </div>
 
         <Toast ref={(toast: Toast) => { registerToastRef(toast); }} position="center" />

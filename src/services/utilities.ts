@@ -1,3 +1,4 @@
+import type { Toast } from "primereact/toast";
 import type { Day, Month, Year } from "./models";
 
 export const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -108,3 +109,9 @@ export function daySkeletonLength(today: Date, monthKey: string): { length: numb
         ? { length: today.getDate() }
         : { length: 30 };
 }
+
+export let toastMessage: Toast;
+export const registerToastRef = (toastRef: Toast) => toastMessage = toastRef;
+
+export let breadCrumbUpdater: (key: string) => void;
+export const setBreadCrumbUpdater = (func: typeof breadCrumbUpdater) => breadCrumbUpdater = func;

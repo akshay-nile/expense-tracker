@@ -5,14 +5,14 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { getExpensesOfDay } from "../services/expenses";
 import { formatRupee } from "../services/utilities";
 import ExpenseListEditor from "./ExpenseListEditor";
-import { expenseListReady } from "../services/intercom";
 
 type Props = {
     dayKey: string,
+    jumpTrigger: boolean,
     onDayTotalChange: (event: TotalChangeEvent) => void
 };
 
-function ExpenseList({ dayKey, onDayTotalChange }: Props) {
+function ExpenseList({ dayKey, jumpTrigger, onDayTotalChange }: Props) {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [editMode, setEditMode] = useState<boolean>(false);
@@ -36,7 +36,10 @@ function ExpenseList({ dayKey, onDayTotalChange }: Props) {
         setEditMode(false);
     }
 
-    useEffect(() => expenseListReady.register(() => { }), []);
+    useEffect(() => {
+        if (!jumpTrigger) return;
+        setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 1000);
+    }, [jumpTrigger]);
 
     return (
         loading

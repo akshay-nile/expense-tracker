@@ -1,21 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Day, TotalChangeEvent } from "../services/models";
 
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Skeleton } from "primereact/skeleton";
 import { getDaysOfMonth } from "../services/expenses";
-import { dayListReady } from "../services/intercom";
-import { addMissingDays, daySkeletonLength, formatRupee, formatShortMonth } from "../services/utilities";
+import { addMissingDays, breadCrumbUpdater, daySkeletonLength, formatRupee, formatShortMonth } from "../services/utilities";
 import ExpenseList from "./ExpenseList";
 
 type Props = {
     today: Date,
     monthKey: string,
-    onUpdateBreadCrumb: (key: string) => void,
+    jumpTrigger: boolean,
     onMonthTotalChange: (event: TotalChangeEvent) => void
 };
 
-function DayList({ today, monthKey, onMonthTotalChange, onUpdateBreadCrumb }: Props) {
+function DayList({ today, jumpTrigger, monthKey, onMonthTotalChange }: Props) {
     const [days, setDays] = useState<Day[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -43,14 +42,18 @@ function DayList({ today, monthKey, onMonthTotalChange, onUpdateBreadCrumb }: Pr
         onMonthTotalChange({ key: monthKey, total });
     }
 
-    const updateBreadCrumb = useCallback((index: number) => {
+    function updateBreadCrumb(index: number) {
         setActiveIndex(index);
-        onUpdateBreadCrumb(index === null ? '' : days[index - 1]?.key as string);
-    }, [days, onUpdateBreadCrumb]);
+        breadCrumbUpdater(index === null ? '' : days[index - 1]?.key as string);
+    }
 
     useEffect(() => {
-        if (days.length > 0) dayListReady.register(() => updateBreadCrumb(days.length));
-    }, [days, updateBreadCrumb]);
+        if (!jumpTrigger) return;
+        if (days.length > 0) {
+            setActiveIndex(today.getDate());
+            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 750);
+        }
+    }, [jumpTrigger, days, today]);
 
     return (
         loading
@@ -67,6 +70,7 @@ function DayList({ today, monthKey, onMonthTotalChange, onUpdateBreadCrumb }: Pr
                         }>
                             <div>
                                 <ExpenseList dayKey={day.key as string}
+                                    jumpTrigger={jumpTrigger}
                                     onDayTotalChange={onDayTotalChange} />
                             </div>
                         </AccordionTab>
