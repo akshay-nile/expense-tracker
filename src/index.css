@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+body {
+    background: var(--surface-0);
+}
+
 input:focus {
     outline: none;
     border: 1px solid #0cd;
@@ -28,8 +32,12 @@ input::-webkit-inner-spin-button {
     box-shadow: none !important;
 }
 
-.sticky {
-    position: fixed;
-    top: 0;
-    z-index: 100;
+.sticky-top {
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+    margin: 0;
+    padding: 1rem 0rem;
+    border-radius: 1rem;
+    background: var(--surface-0);
 }

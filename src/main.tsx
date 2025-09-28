@@ -13,11 +13,10 @@ if (THEME_KEY in localStorage) setAppTheme(localStorage.getItem(THEME_KEY) as Th
 
 function setAppTheme(theme: Theme) {
   const appTheme = document.getElementById('app-theme') as HTMLLinkElement;
-  if (!appTheme) throw new Error('HTML Link Element not found for id: app-theme');
+  if (!appTheme) throw new Error('HTMLLinkElement not found for id: app-theme');
   appTheme.href = appTheme.href.replace(theme === 'light' ? 'dark' : 'light', theme);
   localStorage.setItem(THEME_KEY, theme);
 }
-
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
