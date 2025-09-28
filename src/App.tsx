@@ -141,7 +141,7 @@ function App({ setAppTheme }: Props) {
             onUpdateBreadCrumb={onUpdateBreadCrumb} />
         </div>
 
-        <Toast ref={registerToastRef} position="center" />
+        <Toast ref={(toast: Toast) => { registerToastRef(toast); }} position="center" />
 
       </div>
     </div>
