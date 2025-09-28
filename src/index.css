@@ -44,4 +44,5 @@ input::-webkit-inner-spin-button {
     padding: 1rem 0rem;
     border-radius: 1rem;
     background: var(--surface-0);
+    background: color-mix(in srgb, var(--surface-0) 95%, transparent);
 }

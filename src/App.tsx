@@ -130,7 +130,7 @@ function App({ setAppTheme }: Props) {
             </div>
           </div>
 
-          <div className="my-4 mb-0 mx-2.5">
+          <div className="mt-4 mx-2.5">
             <BreadCrumb model={breadCrumbItems} home={{ icon: 'pi pi-home' }}
               style={{ fontWeight: '350', fontSize: '0.99rem' }} />
           </div>
