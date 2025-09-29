@@ -77,8 +77,8 @@ function App({ setAppTheme }: Props) {
   }
 
   async function exportAllToExcelSheet() {
-    const { utils, writeFile } = await import("xlsx");
     setExporting(true);
+    const { utils, writeFile } = await import("xlsx");
     const data = await getAllExpensesForExport();
 
     const worksheets = data.reduce((sheets, row) => {
