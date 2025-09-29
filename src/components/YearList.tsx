@@ -7,10 +7,7 @@ import { getYears } from "../services/expenses";
 import { addMissingYears, breadCrumbUpdater, formatRupee, yearSkeletonLength } from "../services/utilities";
 import MonthList from "./MonthList";
 
-type Props = {
-    today: Date,
-    jumpTrigger: boolean
-};
+type Props = { today: Date, jumpTrigger: boolean };
 
 function YearList({ today, jumpTrigger }: Props) {
     const [years, setYears] = useState<Year[]>([]);

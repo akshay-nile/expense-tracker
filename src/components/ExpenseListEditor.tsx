@@ -27,6 +27,7 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
 
     function isInvalidEditExpense(expense: EditExpense): boolean {
         if (expense.timestamp === 0) return true;
+        if (expense.purpose.includes(',')) return true;
         if (expense.purpose.trim().length === 0) return true;
         if (notParsable(expense.amount)) return true;
         return false;

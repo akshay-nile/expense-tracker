@@ -2,8 +2,9 @@ import { BreadCrumb } from 'primereact/breadcrumb';
 import { Button } from 'primereact/button';
 import type { MenuItem } from 'primereact/menuitem';
 import { Toast } from 'primereact/toast';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { utils, writeFile } from 'xlsx';
+import MonthExpenseReport from './components/MonthExpenseReport';
 import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import useCurrentTime from './custom-hooks/useCurrentTime';
@@ -19,20 +20,45 @@ function App({ setAppTheme }: Props) {
   const time = useCurrentTime();
   const theme = localStorage.getItem(THEME_KEY) as Theme;
 
+  const keyBackupRef = useRef<string>('');
+
   const [exporting, setExporting] = useState<boolean>(false);
   const [breadCrumbItems, setBreadCrumbItems] = useState<MenuItem[]>([]);
   const [isLightTheme, setIsLightTheme] = useState<boolean>(theme ? theme === 'light' : false);
   const [jumpTrigger, setJumpTrigger] = useState<boolean>(false);
+  const [monthReportKey, setMonthReportKey] = useState<string | null>(null);
+
+  const showMonthReport = useCallback((splits: string[]) => {
+    const monthKey = `/${splits[1]}/${splits[2]}`;
+    setMonthReportKey(monthKey);
+    keyBackupRef.current = splits.join('/');
+    setBreadCrumbItems([{ label: `Expense Report of ${formatLongMonth(splits[2])} ${splits[1]}` }]);
+  }, []);
+
+  function closeMonthReport() {
+    if (monthReportKey === null) return;
+    setMonthReportKey(null);
+    updateBreadCrumb(keyBackupRef.current);
+    keyBackupRef.current = '';
+  }
 
   const updateBreadCrumb = useCallback((key: string) => {
     const splits = key.split('/');
     const items: MenuItem[] = [];
     if (splits.length < 2) { setBreadCrumbItems([]); return; }
     if (splits.length >= 2) items.push({ label: 'Year ' + splits[1] });
-    if (splits.length >= 3) items.push({ label: formatLongMonth(splits[2]) });
-    if (splits.length >= 4) items.push({ label: 'Day ' + parseInt(splits[3]) });
+    if (splits.length >= 3) items.push({ label: formatLongMonth(splits[2]), command: () => showMonthReport(splits) });
+    if (splits.length >= 4) items.push({ label: `Day ${parseInt(splits[3])}` });
     setBreadCrumbItems(items);
-  }, []);
+  }, [showMonthReport]);
+
+  function jumpToToday() {
+    if (jumpTrigger) return;
+    if (monthReportKey !== null) closeMonthReport();
+    setJumpTrigger(true);
+    setTimeout(() => setJumpTrigger(false), 1000);
+    updateBreadCrumb('/' + formatISODate(today).replaceAll('-', '/'));
+  }
 
   function toggleAppTheme() {
     const newIsLightTheme = !isLightTheme;
@@ -69,13 +95,6 @@ function App({ setAppTheme }: Props) {
       severity: 'success', summary: 'Exported Successfully!',
       detail: 'Excel file is ready for the download'
     });
-  }
-
-  function jumpToToday() {
-    if (jumpTrigger) return;
-    setJumpTrigger(true);
-    setTimeout(() => setJumpTrigger(false), 1000);
-    updateBreadCrumb('/' + formatISODate(today).replaceAll('-', '/'));
   }
 
   return (
@@ -116,16 +135,25 @@ function App({ setAppTheme }: Props) {
 
           <div className="mt-4 mx-2.5">
             <BreadCrumb model={breadCrumbItems}
-              home={{ icon: `pi ${jumpTrigger ? 'pi-spin pi-spinner' : 'pi-home'}` }}
+              home={{
+                icon: `pi ${monthReportKey !== null ? 'pi-times' : (jumpTrigger ? 'pi-spin pi-spinner' : 'pi-home')}`,
+                command: () => closeMonthReport()
+              }}
               style={{ fontWeight: '350', fontSize: '0.99rem' }}
               ref={() => { setBreadCrumbUpdater(updateBreadCrumb); }} />
           </div>
         </div>
 
-        <div className="mb-4 mx-2.5">
-          <YearList today={today}
-            jumpTrigger={jumpTrigger} />
+        <div className={`mb-4 mx-2.5 ${monthReportKey !== null ? 'hidden' : ''}`}>
+          <YearList today={today} jumpTrigger={jumpTrigger} />
         </div>
+
+        {
+          monthReportKey !== null &&
+          <div className="mb-4 mx-3">
+            <MonthExpenseReport today={today} monthKey={monthReportKey} />
+          </div>
+        }
 
         <Toast ref={(toast: Toast) => { registerToastRef(toast); }} position="center" />
 

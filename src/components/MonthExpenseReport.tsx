@@ -7,14 +7,11 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { getReportOfMonthExpenses } from "../services/expenses";
 import { addMissingDays, formatRupee } from "../services/utilities";
 
-type Props = {
-    today: Date,
-    monthKey: string,
-    total: number
-};
+type Props = { monthKey: string, today: Date };
 
-function MonthExpenseReport({ today, monthKey, total }: Props) {
+function MonthExpenseReport({ today, monthKey }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
+    const [actualTotal, setActualTotal] = useState(0);
     const [estimatedTotal, setEstimatedTotal] = useState(0);
     const [dayCount, setDayCount] = useState(0);
     const [expenses, setExpenses] = useState<MonthReport[]>([]);
@@ -23,8 +20,9 @@ function MonthExpenseReport({ today, monthKey, total }: Props) {
         (async () => {
             try {
                 setLoading(true);
-                if (total === 0) return;
                 const data = await getReportOfMonthExpenses(monthKey);
+                const actualTotal = data.map(d => d.total).reduce((a, b) => a + b, 0);
+                setActualTotal(actualTotal);
 
                 const splits = monthKey.split('/');
                 const dayCount = new Date(parseInt(splits[1]), parseInt(splits[2]), 0).getDate();
@@ -33,23 +31,24 @@ function MonthExpenseReport({ today, monthKey, total }: Props) {
                 addMissingDays(data, today, monthKey, true);
                 setExpenses(data);
 
-                const estimatedTotal = Math.round((total / data.length) * dayCount);
+                const estimatedTotal = Math.round((actualTotal / data.length) * dayCount);
                 setEstimatedTotal(estimatedTotal);
             }
             catch (error) { console.error(error); }
             finally { setLoading(false); }
         })();
-    }, [today, monthKey, total]);
+    }, [today, monthKey]);
 
     return (
         loading
-            ? <ProgressSpinner style={{ width: '100%', height: '3em' }} strokeWidth="0.3em" animationDuration="0.5s" aria-label="Loading" />
-            : total === 0
+            ? <ProgressSpinner strokeWidth="0.12rem" animationDuration="0.5s" aria-label="Loading Report"
+                style={{ width: '100%', height: '11rem', marginTop: '33%' }} />
+            : actualTotal === 0
                 ? <div className="text-center my-3 text-lg cursor-pointer">No Expense</div>
                 : <div>
                     <div className="flex justify-around items-center">
                         {
-                            estimatedTotal !== total &&
+                            estimatedTotal !== actualTotal &&
                             <div className="text-xl text-center tracking-wider font-semibold">
                                 {formatRupee(estimatedTotal)}
                                 <div className="text-xs tracking-normal font-light mt-0.2">
@@ -58,15 +57,14 @@ function MonthExpenseReport({ today, monthKey, total }: Props) {
                             </div>
                         }
                         <div className="text-xl text-center tracking-wider font-semibold">
-                            {formatRupee(total)}
+                            {formatRupee(actualTotal)}
                             <div className="text-xs tracking-normal font-light mt-0.2">
                                 Actual Total of <b>{expenses.length}</b> Days
                             </div>
                         </div>
                     </div>
-                    <div className="w-full mt-2.5">
-                        <DataTable value={expenses} showGridlines size="small"
-                            tableStyle={{ fontSize: 'small' }} >
+                    <div className="w-full mt-3">
+                        <DataTable value={expenses} showGridlines size="small" tableStyle={{ fontSize: '14px' }} >
                             <Column field="day" header="Day" align="center" style={{ textAlign: 'center' }} />
                             <Column field="purpose" header="Expenses" align="center" style={{ textAlign: 'left' }} />
                             <Column field="total" header="Total" align="center" style={{ textAlign: 'left' }}

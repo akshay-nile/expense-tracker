@@ -37,19 +37,6 @@ export interface DailyExpense {
     total: number | string;
 }
 
-export interface MonthReport {
-    day: string;
-    purpose: string;
-    total: number;
-}
-
-export interface MonthReportData {
-    actualTotal: number;
-    estimatedTotal: number;
-    days: Array<MonthReport>;
-    dayCount: number;
-}
-
 export interface PostResult {
     inserted: number,
     updated: number,
@@ -59,6 +46,12 @@ export interface PostResult {
 export interface TotalChangeEvent {
     key: string,
     total: number
+}
+
+export interface MonthReport {
+    day: string;
+    purpose: string;
+    total: number;
 }
 
 export type Theme = 'light' | 'dark';
