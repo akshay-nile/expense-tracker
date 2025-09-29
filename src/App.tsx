@@ -11,6 +11,7 @@ import useCurrentTime from './custom-hooks/useCurrentTime';
 import { getAllExpensesForExport } from './services/expenses';
 import type { DailyExpense, Theme } from './services/models';
 import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, registerToastRef, setBreadCrumbUpdater, toastMessage, weekdays } from './services/utilities';
+import YearExpenseReport from './components/YearExpenseReport';
 
 const THEME_KEY = 'expense-tracker-theme';
 type Props = { setAppTheme: (theme: Theme) => void };
@@ -26,18 +27,25 @@ function App({ setAppTheme }: Props) {
   const [breadCrumbItems, setBreadCrumbItems] = useState<MenuItem[]>([]);
   const [isLightTheme, setIsLightTheme] = useState<boolean>(theme ? theme === 'light' : false);
   const [jumpTrigger, setJumpTrigger] = useState<boolean>(false);
-  const [monthReportKey, setMonthReportKey] = useState<string | null>(null);
+  const [reportKey, setReportKey] = useState<string | null>(null);
+
+  const showYearReport = useCallback((splits: string[]) => {
+    const yearKey = `/${splits[1]}`;
+    setReportKey(yearKey);
+    keyBackupRef.current = splits.join('/');
+    setBreadCrumbItems([{ label: `Expense Report of Year ${splits[1]}` }]);
+  }, []);
 
   const showMonthReport = useCallback((splits: string[]) => {
     const monthKey = `/${splits[1]}/${splits[2]}`;
-    setMonthReportKey(monthKey);
+    setReportKey(monthKey);
     keyBackupRef.current = splits.join('/');
     setBreadCrumbItems([{ label: `Expense Report of ${formatLongMonth(splits[2])} ${splits[1]}` }]);
   }, []);
 
-  function closeMonthReport() {
-    if (monthReportKey === null) return;
-    setMonthReportKey(null);
+  function closeReport() {
+    if (reportKey === null) return;
+    setReportKey(null);
     updateBreadCrumb(keyBackupRef.current);
     keyBackupRef.current = '';
   }
@@ -46,15 +54,15 @@ function App({ setAppTheme }: Props) {
     const splits = key.split('/');
     const items: MenuItem[] = [];
     if (splits.length < 2) { setBreadCrumbItems([]); return; }
-    if (splits.length >= 2) items.push({ label: 'Year ' + splits[1] });
+    if (splits.length >= 2) items.push({ label: 'Year ' + splits[1], command: () => showYearReport(splits) });
     if (splits.length >= 3) items.push({ label: formatLongMonth(splits[2]), command: () => showMonthReport(splits) });
     if (splits.length >= 4) items.push({ label: `Day ${parseInt(splits[3])}` });
     setBreadCrumbItems(items);
-  }, [showMonthReport]);
+  }, [showMonthReport, showYearReport]);
 
   function jumpToToday() {
     if (jumpTrigger) return;
-    if (monthReportKey !== null) closeMonthReport();
+    if (reportKey !== null) closeReport();
     setJumpTrigger(true);
     setTimeout(() => setJumpTrigger(false), 1000);
     updateBreadCrumb('/' + formatISODate(today).replaceAll('-', '/'));
@@ -136,22 +144,26 @@ function App({ setAppTheme }: Props) {
           <div className="mt-4 mx-2.5">
             <BreadCrumb model={breadCrumbItems}
               home={{
-                icon: `pi ${monthReportKey !== null ? 'pi-times' : (jumpTrigger ? 'pi-spin pi-spinner' : 'pi-home')}`,
-                command: () => closeMonthReport()
+                icon: `pi ${reportKey !== null ? 'pi-times' : (jumpTrigger ? 'pi-spin pi-spinner' : 'pi-home')}`,
+                command: () => closeReport()
               }}
               style={{ fontWeight: '350', fontSize: '0.99rem' }}
               ref={() => { setBreadCrumbUpdater(updateBreadCrumb); }} />
           </div>
         </div>
 
-        <div className={`mb-4 mx-2.5 ${monthReportKey !== null ? 'hidden' : ''}`}>
+        <div className={`mb-4 mx-2.5 ${reportKey !== null ? 'hidden' : ''}`}>
           <YearList today={today} jumpTrigger={jumpTrigger} />
         </div>
 
         {
-          monthReportKey !== null &&
+          reportKey !== null &&
           <div className="mb-4 mx-3">
-            <MonthExpenseReport today={today} monthKey={monthReportKey} />
+            {
+              reportKey.split('/').length === 2
+                ? <YearExpenseReport today={today} yearKey={reportKey} />
+                : <MonthExpenseReport today={today} monthKey={reportKey} />
+            }
           </div>
         }
 

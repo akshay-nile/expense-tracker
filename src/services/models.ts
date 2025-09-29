@@ -54,4 +54,10 @@ export interface MonthReport {
     total: number;
 }
 
+export interface YearReport {
+    month: string;
+    purpose: string;
+    total: number;
+}
+
 export type Theme = 'light' | 'dark';

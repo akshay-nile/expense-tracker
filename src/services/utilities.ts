@@ -1,5 +1,5 @@
 import type { Toast } from "primereact/toast";
-import type { Day, Month, MonthReport, Year } from "./models";
+import type { Day, Month, MonthReport, Year, YearReport } from "./models";
 
 export const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -57,7 +57,7 @@ export function addMissingYears(data: Array<Year>, today: Date) {
     data.sort((a, b) => parseInt(a.year) - parseInt(b.year));
 }
 
-export function addMissingMonths(data: Array<Month>, today: Date, yearKey: string) {
+export function addMissingMonths(data: Array<Month> | Array<YearReport>, today: Date, yearKey: string, report = false) {
     const startFrom = 1;
     let endAt = today.getMonth() + 1;
 
@@ -69,7 +69,8 @@ export function addMissingMonths(data: Array<Month>, today: Date, yearKey: strin
     for (let item = startFrom; item <= endAt; item++) {
         const label = new String(item).padStart(2, '0');
         if (data.find(d => d.month === label)) continue;
-        data.push({ month: label, total: 0 });
+        if (!report) (data as Array<Month>).push({ month: label, total: 0 });
+        else (data as Array<YearReport>).push({ month: label, purpose: '', total: 0 });
     }
 
     data.sort((a, b) => parseInt(a.month) - parseInt(b.month));

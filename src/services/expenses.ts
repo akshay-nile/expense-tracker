@@ -1,9 +1,9 @@
-import { type DailyExpense, type Day, type Expense, type Month, type MonthReport, type PostResult, type Year } from './models';
+import { type DailyExpense, type Day, type Expense, type Month, type MonthReport, type PostResult, type Year, type YearReport } from './models';
 
 let baseURL = import.meta.env.VITE_BASE_URL as string;
 let retryCount = 2;
 
-// This wrapper function is used as an interceptor
+// This wrapper function is used as an interceptor that inserts X-Browser-ID header in each request
 async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response | void> {
     const redirectURL = '/projects/browser-authenticator/index.html';
     const browserId = localStorage.getItem("browser-id");
@@ -28,7 +28,7 @@ async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = 
     return response;
 }
 
-async function _fetch(path: string): Promise<[]> {
+async function getExpenses(path: string): Promise<[]> {
     try {
         const response = await fetchWithBrowserId(`${baseURL}/expenses${path}`);
         return await (response as Response).json();
@@ -36,34 +36,38 @@ async function _fetch(path: string): Promise<[]> {
         console.error(error);
         if (import.meta.env.VITE_WIFI_URL && retryCount-- > 0) {
             baseURL = import.meta.env.VITE_WIFI_URL as string;
-            return await _fetch(path);
+            return await getExpenses(path);
         }
     }
     return [];
 }
 
 export async function getYears(): Promise<Year[]> {
-    return await _fetch('');
+    return await getExpenses('');
 }
 
 export async function getMonthsOfYear(yearKey: string): Promise<Month[]> {
-    return await _fetch(yearKey);
+    return await getExpenses(yearKey);
 }
 
 export async function getDaysOfMonth(monthKey: string): Promise<Day[]> {
-    return await _fetch(monthKey);
+    return await getExpenses(monthKey);
 }
 
 export async function getExpensesOfDay(dayKey: string): Promise<Expense[]> {
-    return await _fetch(dayKey);
+    return await getExpenses(dayKey);
 }
 
 export async function getAllExpensesForExport(): Promise<DailyExpense[]> {
-    return await _fetch('?export=true');
+    return await getExpenses('?export=true');
 }
 
 export async function getReportOfMonthExpenses(monthKey: string): Promise<MonthReport[]> {
-    return await _fetch(monthKey + '?report=true');
+    return await getExpenses(monthKey + '?report=true');
+}
+
+export async function getReportOfYearExpenses(yearKey: string): Promise<YearReport[]> {
+    return await getExpenses(yearKey + '?report=true');
 }
 
 export async function postExpensesOfDay(expenses: Expense[], dayKey: string): Promise<PostResult | null> {

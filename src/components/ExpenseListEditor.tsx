@@ -87,6 +87,7 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
             return;
         }
         setSaving(true);
+        editExpenses.forEach(expenses => expenses.purpose = expenses.purpose.trim());
         const expensesToSave = editExpenses.map(toExpense);
         const status = await postExpensesOfDay(expensesToSave, dayKey);
         toastMessage.show({
