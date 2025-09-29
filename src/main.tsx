@@ -1,11 +1,8 @@
+import { PrimeReactProvider } from 'primereact/api';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { PrimeReactProvider } from 'primereact/api';
 import App from './App.tsx';
 import './index.css';
-
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
 import type { Theme } from './services/models.ts';
 
 const THEME_KEY = 'expense-tracker-theme';

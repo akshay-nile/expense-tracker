@@ -3,15 +3,14 @@ import { Button } from 'primereact/button';
 import type { MenuItem } from 'primereact/menuitem';
 import { Toast } from 'primereact/toast';
 import { useCallback, useRef, useState } from 'react';
-import { utils, writeFile } from 'xlsx';
 import MonthExpenseReport from './components/MonthExpenseReport';
+import YearExpenseReport from './components/YearExpenseReport';
 import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import useCurrentTime from './custom-hooks/useCurrentTime';
 import { getAllExpensesForExport } from './services/expenses';
 import type { DailyExpense, Theme } from './services/models';
 import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, registerToastRef, setBreadCrumbUpdater, toastMessage, weekdays } from './services/utilities';
-import YearExpenseReport from './components/YearExpenseReport';
 
 const THEME_KEY = 'expense-tracker-theme';
 type Props = { setAppTheme: (theme: Theme) => void };
@@ -78,6 +77,7 @@ function App({ setAppTheme }: Props) {
   }
 
   async function exportAllToExcelSheet() {
+    const { utils, writeFile } = await import("xlsx");
     setExporting(true);
     const data = await getAllExpensesForExport();
 

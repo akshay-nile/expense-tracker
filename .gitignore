@@ -26,4 +26,3 @@ dist-ssr
 # Python cached builds
 __pycache__/
 *.py[cod]
-*.db
