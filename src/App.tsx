@@ -88,7 +88,7 @@ function App({ setAppTheme }: Props) {
       utils.book_append_sheet(workbook, worksheet, 'Year ' + year);
     }
 
-    const filename = `Daily_Expenses_${formatISODate(today)}.xlsx`;
+    const filename = `Expenses Until ${formatISODate(today)}.xlsx`;
     writeFile(workbook, filename);
     setExporting(false);
     toastMessage.show({

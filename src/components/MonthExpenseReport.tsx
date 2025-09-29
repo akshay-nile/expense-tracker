@@ -44,7 +44,7 @@ function MonthExpenseReport({ today, monthKey }: Props) {
             ? <ProgressSpinner strokeWidth="0.12rem" animationDuration="0.5s" aria-label="Loading Report"
                 style={{ width: '100%', height: '11rem', marginTop: '33%' }} />
             : actualTotal === 0
-                ? <div className="text-center my-3 text-lg cursor-pointer">No Expense</div>
+                ? <div className=" my-[12rem] text-center text-2xl">No Expense</div>
                 : <div>
                     <div className="flex justify-around items-center">
                         {
@@ -59,7 +59,8 @@ function MonthExpenseReport({ today, monthKey }: Props) {
                         <div className="text-xl text-center tracking-wider font-semibold">
                             {formatRupee(actualTotal)}
                             <div className="text-xs tracking-normal font-light mt-0.2">
-                                Actual Total of <b>{expenses.length}</b> Days
+                                {estimatedTotal !== actualTotal && 'Actual '}
+                                Total of <b>{expenses.length}</b> Days
                             </div>
                         </div>
                     </div>
