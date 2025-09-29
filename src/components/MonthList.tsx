@@ -44,7 +44,7 @@ function MonthList({ today, jumpTrigger, yearKey, onYearTotalChange }: Props) {
 
     function updateBreadCrumb(index: number) {
         setActiveIndex(index);
-        breadCrumbUpdater(index === null ? '' : months[index - 1]?.key as string);
+        breadCrumbUpdater(index === null ? yearKey : months[index - 1]?.key as string);
     }
 
     useEffect(() => {

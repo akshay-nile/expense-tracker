@@ -95,6 +95,22 @@ def export_all_expenses() -> List[Dict]:
     return [dict(row) for row in rows]
 
 
+def report_month_expenses(year: str, month: str) -> List[Dict]:
+    cursor = get_conn().cursor()
+    cursor.execute('''
+        SELECT 
+            STRFTIME('%d', date) AS day,
+            GROUP_CONCAT(purpose, ', ') AS purpose,
+            SUM(amount) AS total
+        FROM expenses
+        WHERE STRFTIME('%Y', date) = ? AND STRFTIME('%m', date) = ?
+        GROUP BY day
+        ORDER BY day;
+    ''', (year, month))
+    rows = cursor.fetchall()
+    return [dict(row) for row in rows]
+
+
 def update_expenses(expenses: List[Dict], year: str, month: str, day: str) -> Dict[str, int]:
     conn = get_conn()
     cursor = conn.cursor()
