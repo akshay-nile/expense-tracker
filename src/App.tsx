@@ -1,5 +1,6 @@
 import { BreadCrumb } from 'primereact/breadcrumb';
 import { Button } from 'primereact/button';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 import type { MenuItem } from 'primereact/menuitem';
 import { Toast } from 'primereact/toast';
 import { useCallback, useRef, useState } from 'react';
@@ -8,8 +9,9 @@ import YearExpenseReport from './components/YearExpenseReport';
 import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import useCurrentTime from './custom-hooks/useCurrentTime';
+import usePWAInstaller from './custom-hooks/usePWAInstaller';
 import { getAllExpensesForExport } from './services/expenses';
-import type { DailyExpense, Theme } from './services/models';
+import type { BeforeInstallPromptEvent, DailyExpense, Theme } from './services/models';
 import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, registerToastRef, setBreadCrumbUpdater, toastMessage, weekdays } from './services/utilities';
 
 const THEME_KEY = 'expense-tracker-theme';
@@ -18,8 +20,9 @@ type Props = { setAppTheme: (theme: Theme) => void };
 function App({ setAppTheme }: Props) {
   const today = useCurrentDate();
   const time = useCurrentTime();
-  const theme = localStorage.getItem(THEME_KEY) as Theme;
+  const [isInstalled, installPrompt] = usePWAInstaller("expense-tacker-pwa");
 
+  const theme = localStorage.getItem(THEME_KEY) as Theme;
   const keyBackupRef = useRef<string>('');
 
   const [exporting, setExporting] = useState<boolean>(false);
@@ -27,6 +30,17 @@ function App({ setAppTheme }: Props) {
   const [isLightTheme, setIsLightTheme] = useState<boolean>(theme ? theme === 'light' : false);
   const [jumpTrigger, setJumpTrigger] = useState<boolean>(false);
   const [reportKey, setReportKey] = useState<string | null>(null);
+
+  function showPWAInstallPrompt() {
+    if (!installPrompt) {
+      toastMessage.show({
+        severity: 'warn', summary: 'Browser Approval Required!',
+        detail: 'PWA installation is not approved by the browser yet'
+      });
+      return;
+    }
+    (installPrompt as BeforeInstallPromptEvent).prompt();
+  }
 
   const showYearReport = useCallback((splits: string[]) => {
     const yearKey = `/${splits[1]}`;
@@ -71,9 +85,7 @@ function App({ setAppTheme }: Props) {
     const newIsLightTheme = !isLightTheme;
     setAppTheme(newIsLightTheme ? 'light' : 'dark');
     setIsLightTheme(newIsLightTheme);
-    toastMessage.show({
-      severity: 'info', summary: `${newIsLightTheme ? 'Light' : 'Dark'} Theme Applied!`
-    });
+    toastMessage.show({ severity: 'info', summary: `${newIsLightTheme ? 'Light' : 'Dark'} Theme Applied!` });
   }
 
   async function exportAllToExcelSheet() {
@@ -120,11 +132,11 @@ function App({ setAppTheme }: Props) {
             </div>
 
             <div className="flex">
-              <div className="me-3.5">
+              <div className={`me-3.5 ${isInstalled ? 'hidden' : ''}`}>
                 <Button icon="pi pi-mobile" outlined
                   tooltip='Install as PWA' tooltipOptions={{ position: 'left' }}
                   size='large' style={{ width: '2.5rem', height: '2.5rem', padding: '0rem' }}
-                />
+                  onClick={showPWAInstallPrompt} />
               </div>
               <div className="me-3.5">
                 <Button icon={`pi ${exporting ? 'pi-spin pi-spinner' : 'pi-file-export'}`} outlined
@@ -168,6 +180,7 @@ function App({ setAppTheme }: Props) {
         }
 
         <Toast ref={(toast: Toast) => { registerToastRef(toast); }} position="center" />
+        <ConfirmDialog />
 
       </div>
     </div>
