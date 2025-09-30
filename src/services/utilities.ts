@@ -52,7 +52,7 @@ export function formatTime(time: Date): string {
 }
 
 export function addMissingYears(data: Array<Year>, today: Date) {
-    const startFrom = Math.min(...data.map(d => parseInt(d.year)));
+    const startFrom = data.length ? Math.min(...data.map(d => parseInt(d.year))) : 2025;
     const endAt = today.getFullYear();
 
     for (let item = startFrom; item <= endAt; item++) {
