@@ -6,10 +6,13 @@ import { DataTable } from "primereact/datatable";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { getReportOfYearExpenses } from "../services/expenses";
 import { addMissingMonths, formatRupee, formatShortMonth } from "../services/utilities";
+import { Chip } from "primereact/chip";
 
 type Props = { yearKey: string, today: Date };
 
 function YearExpenseReport({ today, yearKey }: Props) {
+    const toChips = (p: string) => p.split(', ').map((s: string) => <Chip label={s} style={{ fontSize: 'smaller', borderRadius: '0.4rem', margin: '0.2rem' }} />);
+
     const [loading, setLoading] = useState<boolean>(false);
     const [actualTotal, setActualTotal] = useState(0);
     const [estimatedTotal, setEstimatedTotal] = useState(0);
@@ -64,11 +67,12 @@ function YearExpenseReport({ today, yearKey }: Props) {
                         </div>
                     </div>
                     <div className="w-full mt-3">
-                        <DataTable value={expenses} showGridlines size="small" tableStyle={{ fontSize: '14px' }} >
-                            <Column field="month" header="Month" align="center" style={{ textAlign: 'center' }}
+                        <DataTable value={expenses} showGridlines size="small" tableStyle={{ fontSize: '15px' }} >
+                            <Column field="month" header="Month" align="center" bodyStyle={{ textAlign: 'center' }}
                                 body={row => formatShortMonth(row.month)} />
-                            <Column field="purpose" header="Expenses" align="center" style={{ textAlign: 'left' }} />
-                            <Column field="total" header="Total" align="center" style={{ textAlign: 'left' }}
+                            <Column field="purpose" header="Expenses" align="center" bodyStyle={{ textAlign: 'left' }}
+                                body={row => toChips(row.purpose)} />
+                            <Column field="total" header="Total" align="center" bodyStyle={{ textAlign: 'center' }}
                                 body={row => formatRupee(row.total)} />
                         </DataTable>
                     </div>

@@ -68,9 +68,8 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
 
     async function saveEditExpenses() {
         if (editExpenses.some(isInvalidEditExpense)) {
-            console.error('Invalid Expense Found:', editExpenses);
             toastMessage.show({
-                severity: 'error', summary: 'Invalid Expense!',
+                severity: 'error', summary: 'Invalid Expense',
                 detail: 'Some expense is unacceptable and cannot be saved'
             });
             setInvalid(true);
@@ -78,9 +77,8 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
         }
         const purposes = editExpenses.map(expense => expense.purpose);
         if (notUnique(purposes)) {
-            console.error('Duplicate Purpose Found:', purposes);
             toastMessage.show({
-                severity: 'error', summary: 'Duplicate Purpose!',
+                severity: 'error', summary: 'Duplicate Purpose',
                 detail: 'All the expenses should have unique Purpose fields'
             });
             setInvalid(true);
@@ -91,7 +89,7 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
         const expensesToSave = editExpenses.map(toExpense);
         const status = await postExpensesOfDay(expensesToSave, dayKey);
         toastMessage.show({
-            severity: 'success', summary: 'Expenses Saved!',
+            severity: 'success', summary: 'Expenses Saved',
             detail: `Added: ${status?.inserted} Updated: ${status?.updated} Deleted: ${status?.deleted}`
         });
         onSave(expensesToSave);

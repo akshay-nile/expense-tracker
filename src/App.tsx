@@ -35,7 +35,7 @@ function App({ setAppTheme }: Props) {
   function showPWAInstallPrompt() {
     if (!installPrompt) {
       toastMessage.show({
-        severity: 'warn', summary: 'Browser Approval Required!',
+        severity: 'warn', summary: 'Browser Approval Pending',
         detail: 'PWA installation is not approved by the browser yet'
       });
       return;
@@ -86,7 +86,7 @@ function App({ setAppTheme }: Props) {
     const newIsLightTheme = !isLightTheme;
     setAppTheme(newIsLightTheme ? 'light' : 'dark');
     setIsLightTheme(newIsLightTheme);
-    toastMessage.show({ severity: 'info', summary: `${newIsLightTheme ? 'Light' : 'Dark'} Theme Applied!` });
+    toastMessage.show({ severity: 'info', summary: `${newIsLightTheme ? 'Light' : 'Dark'} Theme Applied` });
   }
 
   async function exportAllToExcelSheet() {
@@ -113,7 +113,7 @@ function App({ setAppTheme }: Props) {
     writeFile(workbook, filename);
     setExporting(false);
     toastMessage.show({
-      severity: 'success', summary: 'Exported Successfully!',
+      severity: 'success', summary: 'Exported Successfully',
       detail: 'Excel file is ready for the download'
     });
   }
@@ -180,7 +180,7 @@ function App({ setAppTheme }: Props) {
           </div>
         }
 
-        <div className={`mb-4 mx-2.5 ${reportKey !== null ? 'hidden' : ''}`}>
+        <div className={`my-4 mx-2.5 ${reportKey !== null ? 'hidden' : ''}`}>
           <SearchExpenses />
         </div>
 

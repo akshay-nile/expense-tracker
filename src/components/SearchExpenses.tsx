@@ -8,6 +8,8 @@ import type { SearchedExpense } from "../services/models";
 import { formatRupee, formatShortDate, toastMessage } from "../services/utilities";
 
 function SearchExpenses() {
+    const toTotal = (expenses: SearchedExpense[]) => formatRupee(expenses.map(e => e.amount).reduce((a, b) => a + b, 0));
+
     const [icon, setIcon] = useState<'search' | 'times' | 'spinner pi-spin'>('search');
     const [searchValue, setSearchValue] = useState<string>('');
     const [expenses, setExpenses] = useState<SearchedExpense[]>([]);
@@ -18,9 +20,9 @@ function SearchExpenses() {
             return;
         }
         setIcon('spinner pi-spin');
-        const data = await getSearchedExpenses(searchValue);
+        const data = await getSearchedExpenses(searchValue.trim());
         if (!data.length) toastMessage.show({
-            severity: 'warn', summary: 'No Results Found!',
+            severity: 'warn', summary: 'No Results Found',
             detail: 'Did not find any expense with matching purpose'
         });
         setExpenses(data);
@@ -44,7 +46,7 @@ function SearchExpenses() {
     return (
         <div>
             <div className="p-inputgroup flex-1">
-                <InputText placeholder="Search for Expenses"
+                <InputText placeholder="Search Expenses"
                     value={searchValue}
                     onChange={e => editSearchValue(e.target.value)}
                     onKeyDown={onEnterOrEscapeKey} />
@@ -57,9 +59,13 @@ function SearchExpenses() {
                 <div className="m-0">
                     <DataTable value={expenses} size="small" tableStyle={{ fontSize: '15px', cursor: 'pointer' }} >
                         <Column field="date" header="Date" body={row => formatShortDate(new Date(row.date))} />
-                        <Column field="purpose" header="Expenses" />
-                        <Column field="amount" header="Amount" body={row => formatRupee(row.amount)}
-                            headerTooltip={`Total Amount ${formatRupee(expenses.map(e => e.amount).reduce((a, b) => a + b, 0))}`} />
+                        <Column field="purpose" header="Expenses"
+                            headerTooltip={`Found ${expenses.length} Expenses`}
+                            headerTooltipOptions={{ position: 'top' }} />
+                        <Column field="amount" header="Amount" align='right' bodyStyle={{ textAlign: 'right' }}
+                            body={row => formatRupee(row.amount)}
+                            headerTooltip={`Total Amount ${toTotal(expenses)}`}
+                            headerTooltipOptions={{ position: 'top' }} />
                     </DataTable>
                 </div>
             }
