@@ -127,7 +127,7 @@ function App({ setAppTheme }: Props) {
             <div className="flex flex-col font-light ms-3 cursor-pointer" onClick={jumpToToday}>
               <div className="flex">
                 <div className="text-2xl">{weekdays[today.getDay()]}</div>
-                <div className="w-full text-sm text-center self-end">{formatTime(time)}</div>
+                <div className="ms-2 text-sm self-end font-normal">{formatTime(time)}</div>
               </div>
               <div className="text-xl self-start">{formatLongDate(today)}</div>
             </div>
