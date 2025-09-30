@@ -40,7 +40,7 @@ if ("serviceWorker" in navigator) {
             message: 'Reload the app now?',
             icon: 'pi pi-sync',
             closable: false,
-            accept: () => setTimeout(window.location.reload, 200)
+            accept: () => window.location.reload()
           });
           return;
         }
