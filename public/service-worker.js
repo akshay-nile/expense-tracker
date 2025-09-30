@@ -76,7 +76,10 @@ self.addEventListener("fetch", (event) => {
         if (cached) return cached;
 
         const response = await fetch(event.request);
-        if (event.request.url.includes(`/${APP_NAME}/`)) cache.put(event.request, response.clone());
+        if (event.request.url.includes(`/${APP_NAME}/`) || event.request.url.startsWith('https://unpkg.com/')) {
+            try { cache.put(event.request, response.clone()); }
+            catch (error) { console.warn("Cache put failed:", event.request.url, error); }
+        }
         return response;
     }));
 });
