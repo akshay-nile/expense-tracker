@@ -135,6 +135,18 @@ def report_year_expenses(year: str) -> List[Dict]:
     return [dict(row) for row in rows]
 
 
+def search_for_expenses(search: str) -> List[Dict]:
+    cursor = get_conn().cursor()
+    cursor.execute('''
+        SELECT date, purpose, amount
+        FROM expenses
+        WHERE LOWER(purpose) LIKE '%' || LOWER(?) || '%'
+        ORDER BY date DESC;
+    ''', (search,))
+    rows = cursor.fetchall()
+    return [dict(row) for row in rows]
+
+
 def update_expenses(expenses: List[Dict], year: str, month: str, day: str) -> Dict[str, int]:
     conn = get_conn()
     cursor = conn.cursor()

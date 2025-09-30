@@ -16,16 +16,23 @@ export function formatRupee(amount: number): string {
 
 export function formatISODate(date: Date): string {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
 }
 
 export function formatLongDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
     const monthName = months[date.getMonth()];
     const year = date.getFullYear();
     return `${day} ${monthName}, ${year}`;
+}
+
+export function formatShortDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = formatShortMonth((date.getMonth() + 1).toString());
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
 }
 
 export function formatLongMonth(month: string): string {

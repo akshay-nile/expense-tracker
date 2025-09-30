@@ -13,6 +13,7 @@ import usePWAInstaller from './custom-hooks/usePWAInstaller';
 import { getAllExpensesForExport } from './services/expenses';
 import type { BeforeInstallPromptEvent, DailyExpense, Theme } from './services/models';
 import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, registerToastRef, setBreadCrumbUpdater, toastMessage, weekdays } from './services/utilities';
+import SearchExpenses from './components/SearchExpenses';
 
 const THEME_KEY = 'expense-tracker-theme';
 type Props = { setAppTheme: (theme: Theme) => void };
@@ -178,6 +179,10 @@ function App({ setAppTheme }: Props) {
             }
           </div>
         }
+
+        <div className={`mb-4 mx-2.5 ${reportKey !== null ? 'hidden' : ''}`}>
+          <SearchExpenses />
+        </div>
 
         <Toast ref={(toast: Toast) => { registerToastRef(toast); }} position="center" />
         <ConfirmDialog />

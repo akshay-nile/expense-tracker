@@ -24,6 +24,12 @@ export interface Expense {
     amount: number;
 }
 
+export interface SearchedExpense {
+    date: string;
+    purpose: string;
+    amount: number;
+}
+
 export interface EditExpense {
     key?: string;
     timestamp: number;
