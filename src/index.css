@@ -36,6 +36,12 @@ input::-webkit-inner-spin-button {
     width: 90%;
 }
 
+.p-overlaypanel-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: 50vw !important;
+}
+
 .sticky-top {
     position: sticky;
     top: 0px;

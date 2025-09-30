@@ -100,7 +100,7 @@ def report_month_expenses(year: str, month: str) -> List[Dict]:
     cursor.execute('''
         SELECT 
             STRFTIME('%d', date) AS day,
-            GROUP_CONCAT(purpose, ', ') AS purpose,
+            GROUP_CONCAT(LOWER(purpose), ', ') AS purpose,
             SUM(amount) AS total
         FROM expenses
         WHERE STRFTIME('%Y', date) = ? AND STRFTIME('%m', date) = ?
@@ -116,21 +116,51 @@ def report_year_expenses(year: str) -> List[Dict]:
     cursor.execute('''
         SELECT
             month,
-            GROUP_CONCAT(purpose, ', ') AS purpose,
+            GROUP_CONCAT(LOWER(purpose), ', ') AS purpose,
             SUM(total) AS total
         FROM (
             SELECT
                 STRFTIME('%m', date) AS month,
-                purpose,
+                LOWER(purpose) AS purpose,
                 SUM(amount) AS total
             FROM expenses
             WHERE STRFTIME('%Y', date) = ?
-            GROUP BY month, purpose
+            GROUP BY month, LOWER(purpose)
             ORDER BY amount DESC
         ) AS monthly
         GROUP BY month
         ORDER BY month;
     ''', (year,))
+    rows = cursor.fetchall()
+    return [dict(row) for row in rows]
+
+
+def report_year_categories(year: str) -> List[Dict]:
+    cursor = get_conn().cursor()
+    cursor.execute('''
+        SELECT 
+            LOWER(purpose) AS category, 
+            SUM(amount) AS total
+        FROM expenses
+        WHERE strftime('%Y', date) = ?
+        GROUP BY LOWER(purpose)
+        ORDER BY total DESC;
+    ''', (year,))
+    rows = cursor.fetchall()
+    return [dict(row) for row in rows]
+
+
+def report_month_categories(year: str, month: str) -> List[Dict]:
+    cursor = get_conn().cursor()
+    cursor.execute('''
+        SELECT 
+            LOWER(purpose) AS category, 
+            SUM(amount) AS total
+        FROM expenses
+        WHERE STRFTIME('%Y', date) = ? AND STRFTIME('%m', date) = ?
+        GROUP BY LOWER(purpose)
+        ORDER BY total DESC;    
+    ''', (year, month))
     rows = cursor.fetchall()
     return [dict(row) for row in rows]
 

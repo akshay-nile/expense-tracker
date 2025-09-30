@@ -1,4 +1,4 @@
-import { type DailyExpense, type Day, type Expense, type Month, type MonthReport, type PostResult, type SearchedExpense, type Year, type YearReport } from './models';
+import { type Category, type DailyExpense, type Day, type Expense, type Month, type MonthReport, type PostResult, type SearchedExpense, type Year, type YearReport } from './models';
 
 let baseURL = import.meta.env.VITE_BASE_URL as string;
 let retryCount = 2;
@@ -68,6 +68,10 @@ export async function getReportOfMonthExpenses(monthKey: string): Promise<MonthR
 
 export async function getReportOfYearExpenses(yearKey: string): Promise<YearReport[]> {
     return await getExpenses(yearKey + '?report=true');
+}
+
+export async function getReportOfCategories(reportKey: string): Promise<Category[]> {
+    return await getExpenses(reportKey + '?categories=true');
 }
 
 export async function getSearchedExpenses(search: string): Promise<SearchedExpense[]> {

@@ -66,6 +66,11 @@ export interface YearReport {
     total: number;
 }
 
+export interface Category {
+    category: string;
+    total: number;
+}
+
 export type Theme = 'light' | 'dark';
 
 // Define the type globally
