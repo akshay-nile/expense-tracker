@@ -5,6 +5,7 @@ import { ListBox } from "primereact/listbox";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { getReportOfCategories } from "../services/expenses";
 import { formatRupee } from "../services/utilities";
+import { Chip } from "primereact/chip";
 
 type Props = { reportKey: string };
 
@@ -28,7 +29,7 @@ function CategoriesReport({ reportKey }: Props) {
     function getItemTemplate(category: Category) {
         return (
             <div className="flex justify-between items-center gap-5">
-                <span>{category.category}</span>
+                <Chip label={category.category} style={{ fontSize: 'smaller', borderRadius: '0.4rem' }} />
                 <span>{formatRupee(category.total)}</span>
             </div>
         );

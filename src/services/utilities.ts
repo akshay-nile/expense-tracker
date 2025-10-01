@@ -22,7 +22,7 @@ export function formatISODate(date: Date): string {
 }
 
 export function formatLongDate(date: Date): string {
-    const day = date.getDate().toString().padStart(2, "0");
+    const day = date.getDate();
     const monthName = months[date.getMonth()];
     const year = date.getFullYear();
     return `${day} ${monthName}, ${year}`;
