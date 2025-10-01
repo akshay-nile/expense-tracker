@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Category } from "../services/models";
 
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
+import { ListBox } from "primereact/listbox";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { getReportOfCategories } from "../services/expenses";
 import { formatRupee } from "../services/utilities";
@@ -12,6 +11,7 @@ type Props = { reportKey: string };
 function CategoriesReport({ reportKey }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [selections, setSelections] = useState<Category[]>([]);
 
     useEffect(() => {
         (async () => {
@@ -25,15 +25,30 @@ function CategoriesReport({ reportKey }: Props) {
         })();
     }, [reportKey]);
 
+    function getItemTemplate(category: Category) {
+        return (
+            <div className="flex justify-between items-center gap-5">
+                <span>{category.category}</span>
+                <span>{formatRupee(category.total)}</span>
+            </div>
+        );
+    }
+
     return (
         loading
-            ? <ProgressSpinner strokeWidth="0.15rem" animationDuration="0.5s" aria-label="Loading Report"
+            ? <ProgressSpinner strokeWidth="0.15rem" animationDuration="0.5s" aria-label="Loading Categories"
                 style={{ width: '100%', height: '5rem', marginTop: '1%' }} />
-            : <DataTable value={categories} showGridlines size="small" tableStyle={{ fontSize: '14px' }} >
-                <Column field="category" header="Category" align="center" bodyStyle={{ textAlign: 'left' }} />
-                <Column field="total" header="Total" align="center" bodyStyle={{ textAlign: 'center' }}
-                    body={row => formatRupee(row.total)} />
-            </DataTable>
+            : <div>
+                <div className={`text-lg text-center tracking-wider font-semibold my-2.5 ${categories.length < 2 ? 'hidden' : ''}`}>
+                    {formatRupee(selections.map(c => c.total).reduce((a, b) => a + b, 0))}
+                    <div className="text-xs tracking-normal font-light mt-0.2">
+                        {selections.length === 0 ? 'No Catergory Selected' : `Total of ${selections.length} Selected Categories`}
+                    </div>
+                </div>
+                <ListBox multiple itemTemplate={c => getItemTemplate(c)}
+                    options={categories} optionLabel="category"
+                    value={selections} onChange={e => setSelections(e.value)} />
+            </div>
     );
 }
 
