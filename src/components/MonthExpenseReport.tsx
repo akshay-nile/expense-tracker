@@ -65,7 +65,7 @@ function MonthExpenseReport({ today, monthKey }: Props) {
                         </div>
                         {
                             estimatedTotal !== actualTotal &&
-                            <div onClick={e => { setShowChart(false); opRef.current?.toggle(e); }}
+                            <div onClick={e => { setShowChart(true); opRef.current?.toggle(e); }}
                                 className="text-xl text-center tracking-wider font-semibold cursor-pointer">
                                 {formatRupee(estimatedTotal)}
                                 <div className="text-xs tracking-normal font-light mt-0.2">
