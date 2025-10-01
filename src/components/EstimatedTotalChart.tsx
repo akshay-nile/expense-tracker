@@ -27,9 +27,11 @@ function EstimatedTotalChart({ estimatedTotal, actualTotal }: Props) {
                         documentStyle.getPropertyValue('--orange-500')
                     ],
                     hoverBackgroundColor: [
-                        documentStyle.getPropertyValue('--blue-400'),
-                        documentStyle.getPropertyValue('--orange-400')
-                    ]
+                        documentStyle.getPropertyValue('--blue-600'),
+                        documentStyle.getPropertyValue('--orange-600')
+                    ],
+                    borderWidth: 0,
+                    borderColor: "transparent"
                 }
             ]
         });
