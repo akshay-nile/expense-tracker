@@ -9,6 +9,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { getReportOfYearExpenses } from "../services/expenses";
 import { addMissingMonths, formatRupee, formatShortMonth } from "../services/utilities";
 import CategoriesReport from "./CategoriesReport";
+import EstimatedTotalChart from "./EstimatedTotalChart";
 
 type Props = { yearKey: string, today: Date };
 
@@ -21,6 +22,7 @@ function YearExpenseReport({ today, yearKey }: Props) {
     const [estimatedTotal, setEstimatedTotal] = useState(0);
     const [monthCount, setMonthCount] = useState(0);
     const [expenses, setExpenses] = useState<YearReport[]>([]);
+    const [showChart, setShowChart] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -52,7 +54,7 @@ function YearExpenseReport({ today, yearKey }: Props) {
                 ? <div className=" my-[12rem] text-center text-2xl">No Expense</div>
                 : <div>
                     <div className="flex justify-around items-center">
-                        <div onClick={e => opRef.current?.toggle(e)}
+                        <div onClick={e => { setShowChart(false); opRef.current?.toggle(e); }}
                             className="text-xl text-center tracking-wider font-semibold cursor-pointer">
                             {formatRupee(actualTotal)}
                             <div className="text-xs tracking-normal font-light mt-0.2">
@@ -62,7 +64,8 @@ function YearExpenseReport({ today, yearKey }: Props) {
                         </div>
                         {
                             estimatedTotal !== actualTotal &&
-                            <div className="text-xl text-center tracking-wider font-semibold">
+                            <div onClick={e => { setShowChart(true); opRef.current?.toggle(e); }}
+                                className="text-xl text-center tracking-wider font-semibold cursor-pointer">
                                 {formatRupee(estimatedTotal)}
                                 <div className="text-xs tracking-normal font-light mt-0.2">
                                     Estimated Total of <b>{monthCount}</b> Months
@@ -80,7 +83,11 @@ function YearExpenseReport({ today, yearKey }: Props) {
                                 body={row => formatRupee(row.total)} />
                         </DataTable>
                         <OverlayPanel ref={opRef} showCloseIcon>
-                            <CategoriesReport reportKey={yearKey} />
+                            {
+                                showChart
+                                    ? <EstimatedTotalChart estimatedTotal={estimatedTotal} actualTotal={actualTotal} />
+                                    : <CategoriesReport reportKey={yearKey} />
+                            }
                         </OverlayPanel>
                     </div>
                 </div>
