@@ -5,12 +5,14 @@ import { Chip } from "primereact/chip";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { OverlayPanel } from "primereact/overlaypanel";
+import { Panel } from "primereact/panel";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { TabPanel, TabView } from "primereact/tabview";
 import { getReportOfMonthExpenses } from "../../services/expenses";
 import { addMissingDays, formatRupee } from "../../services/utilities";
 import CategorizedReport from "./CategorizedReport";
-import EstimationPieChart from "./EstimationPieChart";
+import EstimationPieChart from "./charts/EstimationPieChart";
+import MonthExpenseBarChart from "./charts/MonthExpenseBarChart";
 
 type Props = { monthKey: string, today: Date };
 
@@ -90,8 +92,13 @@ function MonthExpenseReport({ today, monthKey }: Props) {
                             <TabPanel header="Graphical" leftIcon="pi pi-chart-bar me-2" headerClassName="text-xs flex-1">
                                 {
                                     estimatedTotal !== actualTotal &&
-                                    <EstimationPieChart actualTotal={actualTotal} estimatedTotal={estimatedTotal} />
+                                    <Panel header="Remaining Estimation" className="p-3 pt-3.5 pb-0">
+                                        <EstimationPieChart actualTotal={actualTotal} estimatedTotal={estimatedTotal} />
+                                    </Panel>
                                 }
+                                <Panel header="Daily Expenditure" className="p-3 py-3.5">
+                                    <MonthExpenseBarChart expenses={expenses} />
+                                </Panel>
                             </TabPanel>
 
                             <TabPanel header="Categorized" leftIcon="pi pi-bars me-2" headerClassName="text-xs flex-1">

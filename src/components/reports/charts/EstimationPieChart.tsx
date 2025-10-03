@@ -1,6 +1,6 @@
 import { Chart } from "primereact/chart";
 import { useEffect, useState } from "react";
-import { formatRupee } from "../../services/utilities";
+import { formatRupee } from "../../../services/utilities";
 import type { TooltipItem } from "chart.js";
 
 type Props = { estimatedTotal: number, actualTotal: number };
@@ -37,36 +37,34 @@ function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
         });
 
         setChartOptions({
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 1,
             cutout: '66%',
             plugins: {
                 legend: {
                     display: true,
                     position: "bottom",
-                    align: "start",
+                    align: "center",
                     labels: {
                         color: documentStyle.getPropertyValue('--text-color'),
                         font: { size: 14 },
-                        fullSize: true,
                         boxWidth: 15,
                         boxHeight: 15,
                         padding: 15,
-                    },
+                    }
                 },
                 tooltip: {
                     callbacks: {
                         label: () => null,
-                        title: (context: TooltipItem<"doughnut">) => context.label
+                        title: (context: TooltipItem<"doughnut">[]) => formatRupee(context[0].raw as number)
                     }
                 }
             },
         });
     }, [actualTotal, remainingEstimate]);
 
-    return (
-        <div className="flex justify-center p-3 pt-5">
-            <Chart type="doughnut" data={chartData} options={chartOptions} />
-        </div>
-    );
+    return <Chart type="doughnut" data={chartData} options={chartOptions} />;
 };
 
 export default EstimationPieChart;
