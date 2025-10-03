@@ -30,13 +30,16 @@ function CategorizedReport({ reportKey, actualTotal }: Props) {
     function getItemTemplate(category: Category) {
         return (
             <div className="flex justify-between items-center">
-                <span className="min-w-[40%]">
+                <span className="flex-2">
                     <Chip label={category.category} style={{ fontSize: 'smaller', borderRadius: '0.4rem' }} />
                 </span>
-                <span className="w-full justify-self-start mx-1">
+                <div className="flex flex-col flex-1">
+                    <span className="flex text-sm justify-between mb-0.5">
+                        <span>{Math.round(100 * category.total / actualTotal)}%</span>
+                        <span>{formatRupee(category.total)}</span>
+                    </span>
                     <MeterGroup values={[{ value: category.total }]} max={actualTotal} />
-                </span>
-                <span className="w-[60%] text-right">{formatRupee(category.total)}</span>
+                </div>
             </div>
         );
     }
