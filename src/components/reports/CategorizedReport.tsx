@@ -48,7 +48,7 @@ function CategorizedReport({ reportKey, actualTotal }: Props) {
         loading
             ? <ProgressSpinner strokeWidth="0.15rem" animationDuration="0.5s" aria-label="Loading Categories"
                 style={{ width: '100%', height: '5rem', marginTop: '1%' }} />
-            : <div className="p-3 pt-2">
+            : <div className="p-3 pt-2 pb-3.5">
                 <div className={`text-lg text-center tracking-wider font-semibold mb-3 ${categories.length < 2 ? 'hidden' : ''}`}>
                     {formatRupee(selections.map(c => c.total).reduce((a, b) => a + b, 0))}
                     <div className="text-xs tracking-normal font-light mt-0.2">
