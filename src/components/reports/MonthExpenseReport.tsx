@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import type { MonthReport } from "../services/models";
+import type { MonthReport } from "../../services/models";
 
 import { Chip } from "primereact/chip";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { getReportOfMonthExpenses } from "../services/expenses";
-import { addMissingDays, formatRupee } from "../services/utilities";
-import CategoriesReport from "./CategoriesReport";
-import EstimatedTotalChart from "./EstimatedTotalChart";
+import { TabPanel, TabView } from "primereact/tabview";
+import { getReportOfMonthExpenses } from "../../services/expenses";
+import { addMissingDays, formatRupee } from "../../services/utilities";
+import CategorizedReport from "./CategorizedReport";
+import EstimationPieChart from "./EstimationPieChart";
 
 type Props = { monthKey: string, today: Date };
 
@@ -22,7 +23,6 @@ function MonthExpenseReport({ today, monthKey }: Props) {
     const [estimatedTotal, setEstimatedTotal] = useState(0);
     const [dayCount, setDayCount] = useState(0);
     const [expenses, setExpenses] = useState<MonthReport[]>([]);
-    const [showChart, setShowChart] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -55,8 +55,7 @@ function MonthExpenseReport({ today, monthKey }: Props) {
                 ? <div className=" my-[12rem] text-center text-2xl">No Expense</div>
                 : <div>
                     <div className="flex justify-around items-center">
-                        <div onClick={e => { setShowChart(false); opRef.current?.toggle(e); }}
-                            className="text-xl text-center tracking-wider font-semibold cursor-pointer">
+                        <div className="text-xl text-center tracking-wider font-semibold cursor-pointer">
                             {formatRupee(actualTotal)}
                             <div className="text-xs tracking-normal font-light mt-0.2">
                                 {estimatedTotal !== actualTotal && 'Actual '}
@@ -65,7 +64,7 @@ function MonthExpenseReport({ today, monthKey }: Props) {
                         </div>
                         {
                             estimatedTotal !== actualTotal &&
-                            <div onClick={e => { setShowChart(true); opRef.current?.toggle(e); }}
+                            <div onClick={e => opRef.current?.toggle(e)}
                                 className="text-xl text-center tracking-wider font-semibold cursor-pointer">
                                 {formatRupee(estimatedTotal)}
                                 <div className="text-xs tracking-normal font-light mt-0.2">
@@ -75,19 +74,35 @@ function MonthExpenseReport({ today, monthKey }: Props) {
                         }
                     </div>
                     <div className="w-full mt-3">
-                        <DataTable value={expenses} showGridlines size="small" tableStyle={{ fontSize: '15px' }}>
-                            <Column field="day" header="Day" align="center" bodyStyle={{ textAlign: 'center' }} />
-                            <Column field="purpose" header="Expenses" align="center"
-                                body={row => toChips(row.purpose)} bodyStyle={{ textAlign: 'left' }} />
-                            <Column field="total" header="Total" align="center" bodyStyle={{ textAlign: 'center' }}
-                                body={row => formatRupee(row.total)} />
-                        </DataTable>
+                        <TabView>
+                            <TabPanel header="Tabular" leftIcon="pi pi-table me-2" headerClassName="text-xs flex-1">
+                                <div className="p-3 py-3.5">
+                                    <DataTable value={expenses} showGridlines size="small" tableStyle={{ fontSize: '15px' }}>
+                                        <Column field="day" header="Day" align="center" bodyStyle={{ textAlign: 'center' }} />
+                                        <Column field="purpose" header="Expenses" align="center"
+                                            body={row => toChips(row.purpose)} bodyStyle={{ textAlign: 'left' }} />
+                                        <Column field="total" header="Total" align="center" bodyStyle={{ textAlign: 'center' }}
+                                            body={row => formatRupee(row.total)} />
+                                    </DataTable>
+                                </div>
+                            </TabPanel>
+
+                            <TabPanel header="Graphical" leftIcon="pi pi-chart-bar me-2" headerClassName="text-xs flex-1">
+                                {
+                                    estimatedTotal !== actualTotal &&
+                                    <EstimationPieChart actualTotal={actualTotal} estimatedTotal={estimatedTotal} />
+                                }
+                            </TabPanel>
+
+                            <TabPanel header="Categorized" leftIcon="pi pi-bars me-2" headerClassName="text-xs flex-1">
+                                <CategorizedReport reportKey={monthKey} />
+                            </TabPanel>
+                        </TabView>
+
                         <OverlayPanel ref={opRef} showCloseIcon>
-                            {
-                                showChart
-                                    ? <EstimatedTotalChart estimatedTotal={estimatedTotal} actualTotal={actualTotal} />
-                                    : <CategoriesReport reportKey={monthKey} />
-                            }
+                            <div className="m-3">
+                                <b>{Math.round((expenses.length / dayCount) * 100)}%</b> Accurate
+                            </div>
                         </OverlayPanel>
                     </div>
                 </div>

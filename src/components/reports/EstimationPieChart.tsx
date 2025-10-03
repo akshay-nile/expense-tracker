@@ -1,11 +1,11 @@
 import { Chart } from "primereact/chart";
 import { useEffect, useState } from "react";
-import { formatRupee } from "../services/utilities";
+import { formatRupee } from "../../services/utilities";
 import type { TooltipItem } from "chart.js";
 
 type Props = { estimatedTotal: number, actualTotal: number };
 
-function EstimatedTotalChart({ estimatedTotal, actualTotal }: Props) {
+function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
     const remainingEstimate = estimatedTotal - actualTotal;
 
     const [chartData, setChartData] = useState({});
@@ -63,10 +63,10 @@ function EstimatedTotalChart({ estimatedTotal, actualTotal }: Props) {
     }, [actualTotal, remainingEstimate]);
 
     return (
-        <div className="flex justify-center m-2 mt-5">
+        <div className="flex justify-center p-3 pt-5">
             <Chart type="doughnut" data={chartData} options={chartOptions} />
         </div>
     );
 };
 
-export default EstimatedTotalChart;
+export default EstimationPieChart;

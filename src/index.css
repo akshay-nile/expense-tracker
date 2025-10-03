@@ -39,7 +39,12 @@ input::-webkit-inner-spin-button {
 .p-overlaypanel-content {
     padding: 0 !important;
     margin: 0 !important;
-    min-width: 50vw !important;
+    max-width: 50vw !important;
+}
+
+.p-tabview-panels {
+    padding: 0;
+    margin: 0;
 }
 
 .sticky-top {
