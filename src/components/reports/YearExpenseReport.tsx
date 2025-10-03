@@ -104,7 +104,7 @@ function YearExpenseReport({ today, yearKey }: Props) {
 
                         <OverlayPanel ref={opRef} showCloseIcon>
                             <div className="m-3">
-                                <b>{Math.round((expenses.length / 12) * 100)}%</b> Accurate
+                                <b>{Math.round(((expenses.length - 1 + today.getDate() / 31) / 12) * 100)}%</b> Accurate
                             </div>
                         </OverlayPanel>
                     </div>
