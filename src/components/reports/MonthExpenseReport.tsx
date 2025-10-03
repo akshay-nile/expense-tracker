@@ -95,7 +95,7 @@ function MonthExpenseReport({ today, monthKey }: Props) {
                             </TabPanel>
 
                             <TabPanel header="Categorized" leftIcon="pi pi-bars me-2" headerClassName="text-xs flex-1">
-                                <CategorizedReport reportKey={monthKey} />
+                                <CategorizedReport reportKey={monthKey} actualTotal={actualTotal} />
                             </TabPanel>
                         </TabView>
 

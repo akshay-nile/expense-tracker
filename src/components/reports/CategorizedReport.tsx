@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import type { Category } from "../../services/models";
 
+import { Chip } from "primereact/chip";
 import { ListBox } from "primereact/listbox";
+import { MeterGroup } from 'primereact/metergroup';
 import { ProgressSpinner } from "primereact/progressspinner";
 import { getReportOfCategories } from "../../services/expenses";
 import { formatRupee } from "../../services/utilities";
-import { Chip } from "primereact/chip";
 
-type Props = { reportKey: string };
+type Props = { reportKey: string, actualTotal: number };
 
-function CategorizedReport({ reportKey }: Props) {
+function CategorizedReport({ reportKey, actualTotal }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [categories, setCategories] = useState<Category[]>([]);
     const [selections, setSelections] = useState<Category[]>([]);
@@ -28,9 +29,14 @@ function CategorizedReport({ reportKey }: Props) {
 
     function getItemTemplate(category: Category) {
         return (
-            <div className="flex justify-between items-center gap-5">
-                <Chip label={category.category} style={{ fontSize: 'smaller', borderRadius: '0.4rem' }} />
-                <span>{formatRupee(category.total)}</span>
+            <div className="flex justify-between items-center">
+                <span className="min-w-[40%]">
+                    <Chip label={category.category} style={{ fontSize: 'smaller', borderRadius: '0.4rem' }} />
+                </span>
+                <span className="w-full justify-self-start mx-1">
+                    <MeterGroup values={[{ value: category.total }]} max={actualTotal} />
+                </span>
+                <span className="w-[60%] text-right">{formatRupee(category.total)}</span>
             </div>
         );
     }

@@ -91,7 +91,7 @@ function YearExpenseReport({ today, yearKey }: Props) {
                             </TabPanel>
 
                             <TabPanel header="Categorized" leftIcon="pi pi-bars me-2" headerClassName="text-xs flex-1">
-                                <CategorizedReport reportKey={yearKey} />
+                                <CategorizedReport reportKey={yearKey} actualTotal={actualTotal} />
                             </TabPanel>
                         </TabView>
 
