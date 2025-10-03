@@ -10,15 +10,15 @@ export default defineConfig({
     chunkSizeWarningLimit: 512, // Optional, Increases warning threshold
     rollupOptions: {
       output: {
-        // Manual Chunking
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('primereact')) return 'primereact'; // All PrimeReact components
-            if (id.includes('primeicons')) return 'primeicons'; // All PrimeIcons
-            if (id.includes('xlsx')) return 'xlsx'; // XLSX library
-            return 'vendor';  // Other node_modules
+            if (id.includes('primereact')) return 'primereact';
+            if (id.includes('primeicons')) return 'primeicons';
+            if (id.includes('chart.js')) return 'chart.js';
+            if (id.includes('xlsx')) return 'xlsx';
+            return 'vendor';
           }
-        },
+        }
       },
     },
   }
