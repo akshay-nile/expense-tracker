@@ -74,7 +74,7 @@ def get_all_expenses(year: str, month: str, day: str) -> List[Dict]:
             STRFTIME('%Y', date) = ? AND 
             STRFTIME('%m', date) = ? AND 
             STRFTIME('%d', date) = ?
-        ORDER BY timestamp;
+        ORDER BY amount DESC;
     ''', (year, month, day))
     rows = cursor.fetchall()
     return [dict(row) for row in rows]

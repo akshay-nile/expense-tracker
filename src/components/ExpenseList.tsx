@@ -22,6 +22,7 @@ function ExpenseList({ dayKey, jumpTrigger, onDayTotalChange }: Props) {
             try {
                 setLoading(true);
                 const data = await getExpensesOfDay(dayKey);
+                shiftMiscsAtLast(data);
                 setExpenses(data);
             }
             catch (error) { console.error(error); }
@@ -32,8 +33,18 @@ function ExpenseList({ dayKey, jumpTrigger, onDayTotalChange }: Props) {
     function onSave(savedExpenses: Expense[]) {
         const total = savedExpenses.map(expense => expense.amount).reduce((a, b) => a + b, 0);
         onDayTotalChange({ key: dayKey, total });
+        shiftMiscsAtLast(savedExpenses);
         setExpenses(savedExpenses);
         setEditMode(false);
+    }
+
+    function shiftMiscsAtLast(expenses: Expense[]) {
+        const miscsIndex = expenses.findIndex(e => e.purpose.toLocaleLowerCase() === 'miscs');
+        if (miscsIndex !== -1) {
+            const miscs = expenses[miscsIndex];
+            expenses.splice(miscsIndex, 1);
+            expenses.push(miscs);
+        }
     }
 
     useEffect(() => {
