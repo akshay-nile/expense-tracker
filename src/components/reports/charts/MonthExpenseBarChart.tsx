@@ -13,14 +13,11 @@ function MonthExpenseBarChart({ expenses }: Props) {
     useEffect(() => {
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
+        const cyanColor = documentStyle.getPropertyValue('--cyan-500');
 
         setChartData({
             labels: expenses.map(e => 'Day ' + e.day),
-            datasets: [{
-                data: expenses.map(e => e.total),
-                backgroundColor: documentStyle.getPropertyValue('--blue-500'),
-                borderColor: documentStyle.getPropertyValue('--blue-500')
-            }]
+            datasets: [{ data: expenses.map(e => e.total), backgroundColor: cyanColor }]
         });
 
         setChartOptions({
@@ -37,7 +34,7 @@ function MonthExpenseBarChart({ expenses }: Props) {
                 }
             },
             scales: {
-                x: { ticks: { color: textColor, callback: (n: number) => formatRupee(n) } },
+                x: { ticks: { color: textColor, callback: (n: number) => '₹' + (n >= 1000 ? `${(n / 1000).toFixed(1)}K` : n) } },
                 y: { ticks: { color: textColor } }
             }
         });

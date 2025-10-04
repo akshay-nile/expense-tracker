@@ -23,11 +23,11 @@ function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
                 {
                     data: [actualTotal, remainingEstimate],
                     backgroundColor: [
-                        documentStyle.getPropertyValue('--blue-500'),
-                        documentStyle.getPropertyValue('--orange-500')
+                        documentStyle.getPropertyValue('--cyan-500'),
+                        documentStyle.getPropertyValue('--orange-400')
                     ],
                     hoverBackgroundColor: [
-                        documentStyle.getPropertyValue('--blue-600'),
+                        documentStyle.getPropertyValue('--cyan-600'),
                         documentStyle.getPropertyValue('--orange-600')
                     ],
                     borderWidth: 0,

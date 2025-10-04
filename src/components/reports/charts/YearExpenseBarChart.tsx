@@ -13,14 +13,11 @@ function YearExpenseBarChart({ expenses }: Props) {
     useEffect(() => {
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
+        const cyanColor = documentStyle.getPropertyValue('--cyan-500');
 
         setChartData({
             labels: expenses.map(e => formatShortMonth(e.month)),
-            datasets: [{
-                data: expenses.map(e => e.total),
-                backgroundColor: documentStyle.getPropertyValue('--blue-500'),
-                borderColor: documentStyle.getPropertyValue('--blue-500')
-            }]
+            datasets: [{ data: expenses.map(e => e.total), backgroundColor: cyanColor }]
         });
 
         setChartOptions({
