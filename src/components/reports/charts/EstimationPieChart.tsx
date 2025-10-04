@@ -1,7 +1,7 @@
+import type { TooltipItem } from "chart.js";
 import { Chart } from "primereact/chart";
 import { useEffect, useState } from "react";
 import { formatRupee } from "../../../services/utilities";
-import type { TooltipItem } from "chart.js";
 
 type Props = { estimatedTotal: number, actualTotal: number };
 
@@ -15,25 +15,20 @@ function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
         const documentStyle = getComputedStyle(document.documentElement);
 
         setChartData({
-            labels: [
-                `Actual Total ${formatRupee(actualTotal)}`,
-                `Remaining Estimate ${formatRupee(remainingEstimate)}`
-            ],
-            datasets: [
-                {
-                    data: [actualTotal, remainingEstimate],
-                    backgroundColor: [
-                        documentStyle.getPropertyValue('--cyan-500'),
-                        documentStyle.getPropertyValue('--orange-400')
-                    ],
-                    hoverBackgroundColor: [
-                        documentStyle.getPropertyValue('--cyan-600'),
-                        documentStyle.getPropertyValue('--orange-600')
-                    ],
-                    borderWidth: 0,
-                    borderColor: "transparent"
-                }
-            ]
+            labels: ['Actual Total', 'Remaining Estimate'],
+            datasets: [{
+                data: [actualTotal, remainingEstimate],
+                backgroundColor: [
+                    documentStyle.getPropertyValue('--cyan-500'),
+                    documentStyle.getPropertyValue('--orange-400')
+                ],
+                hoverBackgroundColor: [
+                    documentStyle.getPropertyValue('--cyan-600'),
+                    documentStyle.getPropertyValue('--orange-600')
+                ],
+                borderWidth: 0,
+                borderColor: "transparent"
+            }]
         });
 
         setChartOptions({
@@ -48,10 +43,10 @@ function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
                     align: "center",
                     labels: {
                         color: documentStyle.getPropertyValue('--text-color'),
-                        font: { size: 14 },
+                        font: { size: 13 },
                         boxWidth: 15,
                         boxHeight: 15,
-                        padding: 15,
+                        padding: 20,
                     }
                 },
                 tooltip: {
