@@ -59,7 +59,8 @@ function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
         });
     }, [actualTotal, remainingEstimate]);
 
-    return <Chart type="doughnut" data={chartData} options={chartOptions} />;
+    return (Object.keys(chartData).length > 0 && Object.keys(chartOptions).length > 0)
+        ? <Chart type="doughnut" data={chartData} options={chartOptions} /> : <></>;
 };
 
 export default EstimationPieChart;

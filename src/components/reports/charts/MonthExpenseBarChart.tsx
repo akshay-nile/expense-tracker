@@ -40,7 +40,8 @@ function MonthExpenseBarChart({ expenses }: Props) {
         });
     }, [expenses]);
 
-    return <Chart type="bar" data={chartData} options={chartOptions} />;
+    return (Object.keys(chartData).length > 0 && Object.keys(chartOptions).length > 0)
+        ? <Chart type="bar" data={chartData} options={chartOptions} /> : <></>;
 };
 
 export default MonthExpenseBarChart;
