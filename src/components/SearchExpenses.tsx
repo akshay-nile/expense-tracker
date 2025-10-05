@@ -43,6 +43,18 @@ function SearchExpenses() {
         if (e.key === "Escape" || e.key === "Esc") editSearchValue('');
     };
 
+    function highlightFirstMatch(purpose: string) {
+        const match = searchValue.trim().toLowerCase();
+        const startsAt = purpose.toLowerCase().indexOf(match);
+        const endsAt = startsAt + match.length;
+        if (startsAt === -1) return purpose;
+        return <>
+            {purpose.substring(0, startsAt)}
+            <span className="text-cyan-500">{purpose.substring(startsAt, endsAt)}</span>
+            {purpose.substring(endsAt)}
+        </>;
+    }
+
     return (
         <div>
             <div className="p-inputgroup flex-1">
@@ -60,6 +72,7 @@ function SearchExpenses() {
                     <DataTable value={expenses} size="small" tableStyle={{ fontSize: '15px', cursor: 'pointer' }} >
                         <Column field="date" header="Date" body={row => formatShortDate(new Date(row.date))} />
                         <Column field="purpose" header="Expenses"
+                            body={row => highlightFirstMatch(row.purpose)}
                             headerTooltip={`Found ${expenses.length} Expenses`}
                             headerTooltipOptions={{ position: 'top' }} />
                         <Column field="amount" header="Amount" align='right' bodyStyle={{ textAlign: 'right' }}
