@@ -34,7 +34,7 @@ function CategorizedReport({ reportKey, actualTotal }: Props) {
                     <Chip label={category.category} style={{ fontSize: 'smaller', borderRadius: '0.4rem' }} />
                 </span>
                 <div className="flex flex-col flex-1">
-                    <span className="flex text-sm justify-between mb-0.5">
+                    <span className="flex text-sm justify-between mb-0.25">
                         <span>{Math.round(100 * category.total / actualTotal)}%</span>
                         <span>{formatRupee(category.total)}</span>
                     </span>
