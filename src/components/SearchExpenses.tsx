@@ -2,7 +2,7 @@ import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
-import { useState } from "react";
+import { useState, type JSX } from "react";
 import { getSearchedExpenses } from "../services/expenses";
 import type { SearchedExpense } from "../services/models";
 import { formatRupee, formatShortDate, toastMessage } from "../services/utilities";
@@ -36,22 +36,22 @@ function SearchExpenses() {
     }
 
     function onEnterOrEscapeKey(e: React.KeyboardEvent<HTMLInputElement>) {
-        if (e.key === "Enter") {
+        if (e.key === 'Enter') {
             if (searchValue.trim().length && icon === 'search') searchForExpenses();
             return;
         }
-        if (e.key === "Escape" || e.key === "Esc") editSearchValue('');
+        if (e.key === 'Escape' || e.key === 'Esc') editSearchValue('');
     };
 
-    function highlightFirstMatch(purpose: string) {
+    function highlightMatches(value: string): JSX.Element | string {
         const match = searchValue.trim().toLowerCase();
-        const startsAt = purpose.toLowerCase().indexOf(match);
+        const startsAt = value.toLocaleLowerCase().indexOf(match);
         const endsAt = startsAt + match.length;
-        if (startsAt === -1) return purpose;
+        if (startsAt === -1) return value;
         return <>
-            {purpose.substring(0, startsAt)}
-            <span className="text-cyan-500">{purpose.substring(startsAt, endsAt)}</span>
-            {purpose.substring(endsAt)}
+            {value.substring(0, startsAt)}
+            <span className="text-cyan-500">{value.substring(startsAt, endsAt)}</span>
+            {highlightMatches(value.substring(endsAt))}
         </>;
     }
 
@@ -72,7 +72,7 @@ function SearchExpenses() {
                     <DataTable value={expenses} size="small" tableStyle={{ fontSize: '15px', cursor: 'pointer' }} >
                         <Column field="date" header="Date" body={row => formatShortDate(new Date(row.date))} />
                         <Column field="purpose" header="Expenses"
-                            body={row => highlightFirstMatch(row.purpose)}
+                            body={row => highlightMatches(row.purpose)}
                             headerTooltip={`Found ${expenses.length} Expenses`}
                             headerTooltipOptions={{ position: 'top' }} />
                         <Column field="amount" header="Amount" align='right' bodyStyle={{ textAlign: 'right' }}
