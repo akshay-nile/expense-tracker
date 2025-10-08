@@ -119,6 +119,13 @@ export function daySkeletonLength(today: Date, monthKey: string): { length: numb
         : { length: 30 };
 }
 
+export function mapRange(value: number, inpRange: [number, number], outRange: [number, number]): number {
+    const [a1, a2] = inpRange;
+    const [b1, b2] = outRange;
+    const clamped = Math.min(Math.max(value, Math.min(a1, a2)), Math.max(a1, a2));
+    return b1 + ((clamped - a1) * (b2 - b1)) / (a2 - a1);
+}
+
 export let toastMessage: Toast;
 export const registerToastRef = (toastRef: Toast) => toastMessage = toastRef;
 

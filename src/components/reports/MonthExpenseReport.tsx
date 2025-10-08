@@ -97,7 +97,7 @@ function MonthExpenseReport({ today, monthKey }: Props) {
                                     </Panel>
                                 }
                                 <Panel header="Daily Expenditure" className="p-3 py-3.5">
-                                    <MonthExpenseBarChart expenses={expenses} />
+                                    <MonthExpenseBarChart expenses={expenses} dayCount={dayCount} />
                                 </Panel>
                             </TabPanel>
 

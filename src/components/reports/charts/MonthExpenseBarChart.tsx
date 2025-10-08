@@ -2,11 +2,11 @@ import type { TooltipItem } from "chart.js";
 import { Chart } from "primereact/chart";
 import { useEffect, useState } from "react";
 import type { MonthReport } from "../../../services/models";
-import { formatRupee } from "../../../services/utilities";
+import { formatRupee, mapRange } from "../../../services/utilities";
 
-type Props = { expenses: Array<MonthReport> };
+type Props = { expenses: Array<MonthReport>, dayCount: number };
 
-function MonthExpenseBarChart({ expenses }: Props) {
+function MonthExpenseBarChart({ expenses, dayCount }: Props) {
     const [chartData, setChartData] = useState({});
     const [chartOptions, setChartOptions] = useState({});
 
@@ -23,7 +23,7 @@ function MonthExpenseBarChart({ expenses }: Props) {
         setChartOptions({
             indexAxis: 'y',
             maintainAspectRatio: false,
-            aspectRatio: (expenses.length <= 7) ? 1.0 : (expenses.length <= 14) ? 0.8 : (expenses.length <= 21) ? 0.6 : 0.4,
+            aspectRatio: mapRange(expenses.length, [1, dayCount], [1.4, 0.4]),
             plugins: {
                 legend: { display: false },
                 tooltip: {
@@ -38,7 +38,7 @@ function MonthExpenseBarChart({ expenses }: Props) {
                 y: { ticks: { color: textColor } }
             }
         });
-    }, [expenses]);
+    }, [expenses, dayCount]);
 
     return (Object.keys(chartData).length > 0 && Object.keys(chartOptions).length > 0)
         ? <Chart type="bar" data={chartData} options={chartOptions} /> : <></>;
