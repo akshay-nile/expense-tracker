@@ -6,12 +6,11 @@ import { formatRupee } from '../../../services/utilities';
 type Props = { estimatedTotal: number, actualTotal: number };
 
 function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
-    const remainingEstimate = estimatedTotal - actualTotal;
-
     const [chartData, setChartData] = useState({});
     const [chartOptions, setChartOptions] = useState({});
 
     useEffect(() => {
+        const remainingEstimate = estimatedTotal - actualTotal;
         const documentStyle = getComputedStyle(document.documentElement);
 
         setChartData({
@@ -57,7 +56,7 @@ function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
                 }
             },
         });
-    }, [actualTotal, remainingEstimate]);
+    }, [actualTotal, estimatedTotal]);
 
     return (Object.keys(chartData).length > 0 && Object.keys(chartOptions).length > 0)
         ? <Chart type="doughnut" data={chartData} options={chartOptions} /> : <></>;
