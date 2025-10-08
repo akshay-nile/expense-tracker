@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import type { Category } from "../../services/models";
+import { useEffect, useState } from 'react';
+import type { Category } from '../../services/models';
 
-import { Chip } from "primereact/chip";
-import { ListBox } from "primereact/listbox";
+import { Chip } from 'primereact/chip';
+import { ListBox } from 'primereact/listbox';
 import { MeterGroup } from 'primereact/metergroup';
-import { ProgressSpinner } from "primereact/progressspinner";
-import { getReportOfCategories } from "../../services/expenses";
-import { formatRupee } from "../../services/utilities";
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { getReportOfCategories } from '../../services/expenses';
+import { formatRupee } from '../../services/utilities';
 
 type Props = { reportKey: string, actualTotal: number };
 

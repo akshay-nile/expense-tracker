@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import type { Expense, TotalChangeEvent } from "../services/models";
+import { useEffect, useState } from 'react';
+import type { Expense, TotalChangeEvent } from '../services/models';
 
-import { ProgressSpinner } from "primereact/progressspinner";
-import { getExpensesOfDay } from "../services/expenses";
-import { formatRupee } from "../services/utilities";
-import ExpenseListEditor from "./ExpenseListEditor";
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { getExpensesOfDay } from '../services/expenses';
+import { formatRupee } from '../services/utilities';
+import ExpenseListEditor from './ExpenseListEditor';
 
 type Props = {
     dayKey: string,

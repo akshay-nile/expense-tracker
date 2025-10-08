@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import type { BeforeInstallPromptEvent } from "../services/models";
+import { useEffect, useState } from 'react';
+import type { BeforeInstallPromptEvent } from '../services/models';
 
 // Extend Navigator for iOS PWA detection
 interface Navigator {
@@ -7,7 +7,7 @@ interface Navigator {
 }
 
 export default function usePWAInstaller(PWA_KEY: string) {
-    if (!PWA_KEY.trim().length) PWA_KEY = "app-name";
+    if (!PWA_KEY.trim().length) PWA_KEY = 'app-name';
 
     const [isPWAInstalled, setIsPWAInstalled] = useState<boolean>(false);
     const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -24,8 +24,8 @@ export default function usePWAInstaller(PWA_KEY: string) {
         function captureBrowserPrompt(event: Event) {
             (event as BeforeInstallPromptEvent).preventDefault();
             (event as BeforeInstallPromptEvent).userChoice.then(choice => {
-                console.log("PWA installation is " + choice.outcome + "!");
-                if (choice.outcome === "accepted") localStorage.setItem(PWA_KEY, choice.outcome);
+                console.log('PWA installation is ' + choice.outcome + '!');
+                if (choice.outcome === 'accepted') localStorage.setItem(PWA_KEY, choice.outcome);
             });
             localStorage.removeItem(PWA_KEY);
             setIsPWAInstalled(false);
@@ -34,12 +34,12 @@ export default function usePWAInstaller(PWA_KEY: string) {
 
         checkPWAInstallation();
         const mediaQuery = window.matchMedia('(display-mode: standalone)');
-        mediaQuery.addEventListener("change", checkPWAInstallation);
-        window.addEventListener("beforeinstallprompt", captureBrowserPrompt);
+        mediaQuery.addEventListener('change', checkPWAInstallation);
+        window.addEventListener('beforeinstallprompt', captureBrowserPrompt);
 
         return () => {
-            mediaQuery.removeEventListener("change", checkPWAInstallation);
-            window.removeEventListener("beforeinstallprompt", captureBrowserPrompt);
+            mediaQuery.removeEventListener('change', checkPWAInstallation);
+            window.removeEventListener('beforeinstallprompt', captureBrowserPrompt);
         };
     }, [PWA_KEY]);
 

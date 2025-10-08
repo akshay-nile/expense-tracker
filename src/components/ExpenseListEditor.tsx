@@ -1,9 +1,9 @@
-import { useRef, useState } from "react";
-import type { EditExpense, Expense } from "../services/models";
+import { useRef, useState } from 'react';
+import type { EditExpense, Expense } from '../services/models';
 
-import { Button } from "primereact/button";
-import { postExpensesOfDay } from "../services/expenses";
-import { toastMessage } from "../services/utilities";
+import { Button } from 'primereact/button';
+import { postExpensesOfDay } from '../services/expenses';
+import { toastMessage } from '../services/utilities';
 
 type Props = {
     dayKey: string,

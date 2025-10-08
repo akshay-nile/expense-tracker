@@ -1,8 +1,8 @@
-import type { TooltipItem } from "chart.js";
-import { Chart } from "primereact/chart";
-import { useEffect, useState } from "react";
-import type { YearReport } from "../../../services/models";
-import { formatRupee, formatShortMonth } from "../../../services/utilities";
+import type { TooltipItem } from 'chart.js';
+import { Chart } from 'primereact/chart';
+import { useEffect, useState } from 'react';
+import type { YearReport } from '../../../services/models';
+import { formatRupee, formatShortMonth } from '../../../services/utilities';
 
 type Props = { expenses: Array<YearReport> };
 
@@ -29,7 +29,7 @@ function YearExpenseBarChart({ expenses }: Props) {
                 tooltip: {
                     callbacks: {
                         label: () => null,
-                        title: (context: TooltipItem<"bar">[]) => formatRupee(context[0].raw as number)
+                        title: (context: TooltipItem<'bar'>[]) => formatRupee(context[0].raw as number)
                     }
                 }
             },

@@ -1,8 +1,8 @@
-import type { Toast } from "primereact/toast";
-import type { Day, Month, MonthReport, Year, YearReport } from "./models";
+import type { Toast } from 'primereact/toast';
+import type { Day, Month, MonthReport, Year, YearReport } from './models';
 
-export const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+export const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const rupeeFormatter = new Intl.NumberFormat('en-IN', {
     style: 'currency',
@@ -16,8 +16,8 @@ export function formatRupee(amount: number): string {
 
 export function formatISODate(date: Date): string {
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
 
@@ -29,7 +29,7 @@ export function formatLongDate(date: Date): string {
 }
 
 export function formatShortDate(date: Date): string {
-    const day = date.getDate().toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, '0');
     const month = formatShortMonth((date.getMonth() + 1).toString());
     const year = date.getFullYear();
     return `${day} ${month} ${year}`;

@@ -7,6 +7,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
   globalIgnores(['dist']),
+  ...tseslint.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -22,9 +23,10 @@ export default defineConfig([
   },
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
-      "semi": "warn"
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'semi': 'warn',
+      'quotes': ['warn', 'single', { avoidEscape: true }],
     }
   }
 ]);

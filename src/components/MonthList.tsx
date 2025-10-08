@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import type { Month, TotalChangeEvent } from "../services/models";
+import { useEffect, useState } from 'react';
+import type { Month, TotalChangeEvent } from '../services/models';
 
 import { Accordion, AccordionTab } from 'primereact/accordion';
-import { Skeleton } from "primereact/skeleton";
-import { getMonthsOfYear } from "../services/expenses";
-import { addMissingMonths, breadCrumbUpdater, formatLongMonth, formatRupee, monthSkeletonLength } from "../services/utilities";
-import DayList from "./DayList";
+import { Skeleton } from 'primereact/skeleton';
+import { getMonthsOfYear } from '../services/expenses';
+import { addMissingMonths, breadCrumbUpdater, formatLongMonth, formatRupee, monthSkeletonLength } from '../services/utilities';
+import DayList from './DayList';
 
 type Props = {
     today: Date,

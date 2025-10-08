@@ -26,15 +26,15 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>
 );
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
     try {
-      const registration = await navigator.serviceWorker.register("./service-worker.js");
+      const registration = await navigator.serviceWorker.register('./service-worker.js');
       await navigator.serviceWorker.ready;
-      console.log("Service Worker Registered!");
+      console.log('Service Worker Registered!');
 
-      navigator.serviceWorker.addEventListener("message", (event) => {
-        if (event.data === "UPDATED") {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data === 'UPDATED') {
           confirmDialog({
             header: 'New Update Installed',
             message: 'Reload the app now?',
@@ -44,12 +44,12 @@ if ("serviceWorker" in navigator) {
           });
           return;
         }
-        console.log("Message From SW:", event.data);
+        console.log('Message From SW:', event.data);
       });
 
       const controller = navigator.serviceWorker.controller ?? registration.active;
-      controller?.postMessage("CHECK-UPDATE");
+      controller?.postMessage('CHECK-UPDATE');
     }
-    catch (err) { console.error("Service Worker Error:", err); }
+    catch (err) { console.error('Service Worker Error:', err); }
   });
 }

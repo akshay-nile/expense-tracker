@@ -1,7 +1,7 @@
-import type { TooltipItem } from "chart.js";
-import { Chart } from "primereact/chart";
-import { useEffect, useState } from "react";
-import { formatRupee } from "../../../services/utilities";
+import type { TooltipItem } from 'chart.js';
+import { Chart } from 'primereact/chart';
+import { useEffect, useState } from 'react';
+import { formatRupee } from '../../../services/utilities';
 
 type Props = { estimatedTotal: number, actualTotal: number };
 
@@ -27,7 +27,7 @@ function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
                     documentStyle.getPropertyValue('--orange-600')
                 ],
                 borderWidth: 0,
-                borderColor: "transparent"
+                borderColor: 'transparent'
             }]
         });
 
@@ -39,8 +39,8 @@ function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
             plugins: {
                 legend: {
                     display: true,
-                    position: "bottom",
-                    align: "center",
+                    position: 'bottom',
+                    align: 'center',
                     labels: {
                         color: documentStyle.getPropertyValue('--text-color'),
                         font: { size: 13 },
@@ -52,7 +52,7 @@ function EstimationPieChart({ estimatedTotal, actualTotal }: Props) {
                 tooltip: {
                     callbacks: {
                         label: () => null,
-                        title: (context: TooltipItem<"doughnut">[]) => formatRupee(context[0].raw as number)
+                        title: (context: TooltipItem<'doughnut'>[]) => formatRupee(context[0].raw as number)
                     }
                 }
             },

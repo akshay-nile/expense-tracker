@@ -21,7 +21,7 @@ type Props = { setAppTheme: (theme: Theme) => void };
 function App({ setAppTheme }: Props) {
   const today = useCurrentDate();
   const time = useCurrentTime();
-  const [isInstalled, installPrompt] = usePWAInstaller("expense-tacker-pwa");
+  const [isInstalled, installPrompt] = usePWAInstaller('expense-tacker-pwa');
 
   const theme = localStorage.getItem(THEME_KEY) as Theme;
   const keyBackupRef = useRef<string>('');
@@ -91,12 +91,12 @@ function App({ setAppTheme }: Props) {
 
   async function exportAllToExcelSheet() {
     setExporting(true);
-    const { utils, writeFile } = await import("xlsx");
+    const { utils, writeFile } = await import('xlsx');
     const data = await getAllExpensesForExport();
 
     const worksheets = data.reduce((sheets, row) => {
       row.total = formatRupee(row.total as number);
-      const year = row.date.split("-")[0];
+      const year = row.date.split('-')[0];
       if (!sheets.has(year)) sheets.set(year, []);
       sheets.get(year)?.push(row);
       return sheets;
@@ -105,7 +105,7 @@ function App({ setAppTheme }: Props) {
     const workbook = utils.book_new();
     for (const [year, expenses] of worksheets) {
       const worksheet = utils.json_to_sheet(expenses, { header: ['date', 'purpose', 'total'] });
-      utils.sheet_add_aoa(worksheet, [['Date', 'Purpose', 'Total']], { origin: "A1" });
+      utils.sheet_add_aoa(worksheet, [['Date', 'Purpose', 'Total']], { origin: 'A1' });
       utils.book_append_sheet(workbook, worksheet, 'Year ' + year);
     }
 

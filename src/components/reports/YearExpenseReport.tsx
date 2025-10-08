@@ -1,18 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-import type { YearReport } from "../../services/models";
+import { useEffect, useRef, useState } from 'react';
+import type { YearReport } from '../../services/models';
 
-import { Chip } from "primereact/chip";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import { OverlayPanel } from "primereact/overlaypanel";
-import { Panel } from "primereact/panel";
-import { ProgressSpinner } from "primereact/progressspinner";
-import { TabPanel, TabView } from "primereact/tabview";
-import { getReportOfYearExpenses } from "../../services/expenses";
-import { addMissingMonths, formatRupee, formatShortMonth } from "../../services/utilities";
-import CategorizedReport from "./CategorizedReport";
-import EstimationPieChart from "./charts/EstimationPieChart";
-import YearExpenseBarChart from "./charts/YearExpenseBarChart";
+import { Chip } from 'primereact/chip';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { Panel } from 'primereact/panel';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { TabPanel, TabView } from 'primereact/tabview';
+import { getReportOfYearExpenses } from '../../services/expenses';
+import { addMissingMonths, formatRupee, formatShortMonth } from '../../services/utilities';
+import CategorizedReport from './CategorizedReport';
+import EstimationPieChart from './charts/EstimationPieChart';
+import YearExpenseBarChart from './charts/YearExpenseBarChart';
 
 type Props = { yearKey: string, today: Date };
 

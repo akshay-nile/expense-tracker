@@ -6,7 +6,7 @@ let retryCount = 2;
 // This wrapper function is used as an interceptor that inserts X-Browser-ID header in each request
 async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response | void> {
     const redirectURL = '/projects/browser-authenticator/index.html';
-    const browserId = localStorage.getItem("browser-id");
+    const browserId = localStorage.getItem('browser-id');
     const isProd = input.toString().startsWith('https');
 
     if (isProd && !browserId) {
@@ -16,7 +16,7 @@ async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = 
     }
 
     const headers = new Headers(init.headers || {});
-    if (browserId) headers.set("X-Browser-ID", browserId);
+    if (browserId) headers.set('X-Browser-ID', browserId);
 
     const response = await fetch(input, { ...init, headers });
     if (response.status === 400 || response.status === 401) {

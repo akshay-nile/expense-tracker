@@ -1,11 +1,11 @@
-import { Button } from "primereact/button";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import { InputText } from "primereact/inputtext";
-import { useState, type JSX } from "react";
-import { getSearchedExpenses } from "../services/expenses";
-import type { SearchedExpense } from "../services/models";
-import { formatRupee, formatShortDate, toastMessage } from "../services/utilities";
+import { Button } from 'primereact/button';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import { InputText } from 'primereact/inputtext';
+import { useState, type JSX } from 'react';
+import { getSearchedExpenses } from '../services/expenses';
+import type { SearchedExpense } from '../services/models';
+import { formatRupee, formatShortDate, toastMessage } from '../services/utilities';
 
 function SearchExpenses() {
     const toTotal = (expenses: SearchedExpense[]) => formatRupee(expenses.map(e => e.amount).reduce((a, b) => a + b, 0));
