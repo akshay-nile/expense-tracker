@@ -2,7 +2,7 @@ import type { TooltipItem } from 'chart.js';
 import { Chart } from 'primereact/chart';
 import { useEffect, useState } from 'react';
 import type { YearReport } from '../../../services/models';
-import { formatRupee, formatShortMonth } from '../../../services/utilities';
+import { formatRupee, formatRupeeK, formatShortMonth } from '../../../services/utilities';
 
 type Props = { expenses: Array<YearReport> };
 
@@ -35,7 +35,7 @@ function YearExpenseBarChart({ expenses }: Props) {
             },
             scales: {
                 x: { ticks: { color: textColor } },
-                y: { ticks: { color: textColor, callback: (n: number) => formatRupee(n / 1000) + 'K' } }
+                y: { ticks: { color: textColor, callback: formatRupeeK } }
             }
         });
     }, [expenses]);

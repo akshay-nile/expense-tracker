@@ -14,6 +14,14 @@ export function formatRupee(amount: number): string {
     return rupeeFormatter.format(amount);
 }
 
+export function formatRupeeK(amount: number): string {
+    const rupeeSymbol = '₹';
+    if (amount < 1000) return rupeeSymbol + amount;
+    const thousands = amount / 1000;
+    if (amount % 1000 === 0) return rupeeSymbol + thousands + 'K';
+    return rupeeSymbol + parseFloat(thousands.toFixed(3)) + 'K';
+}
+
 export function formatISODate(date: Date): string {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');

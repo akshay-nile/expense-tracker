@@ -2,7 +2,7 @@ import type { TooltipItem } from 'chart.js';
 import { Chart } from 'primereact/chart';
 import { useEffect, useState } from 'react';
 import type { MonthReport } from '../../../services/models';
-import { formatRupee, mapRange } from '../../../services/utilities';
+import { formatRupee, formatRupeeK, mapRange } from '../../../services/utilities';
 
 type Props = { expenses: Array<MonthReport>, dayCount: number };
 
@@ -34,7 +34,7 @@ function MonthExpenseBarChart({ expenses, dayCount }: Props) {
                 }
             },
             scales: {
-                x: { ticks: { color: textColor, callback: (n: number) => '₹' + (n >= 1000 ? `${(n / 1000).toFixed(1)}K` : n) } },
+                x: { ticks: { color: textColor, callback: formatRupeeK } },
                 y: { ticks: { color: textColor } }
             }
         });
