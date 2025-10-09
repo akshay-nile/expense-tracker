@@ -6,6 +6,7 @@ import { Toast } from 'primereact/toast';
 import { useCallback, useRef, useState } from 'react';
 import MonthExpenseReport from './components/reports/MonthExpenseReport';
 import YearExpenseReport from './components/reports/YearExpenseReport';
+import SearchExpenses from './components/SearchExpenses';
 import YearList from './components/YearList';
 import useCurrentDate from './custom-hooks/useCurrentDate';
 import useCurrentTime from './custom-hooks/useCurrentTime';
@@ -13,7 +14,6 @@ import usePWAInstaller from './custom-hooks/usePWAInstaller';
 import { getAllExpensesForExport } from './services/expenses';
 import type { BeforeInstallPromptEvent, DailyExpense, Theme } from './services/models';
 import { formatISODate, formatLongDate, formatLongMonth, formatRupee, formatTime, registerToastRef, setBreadCrumbUpdater, toastMessage, weekdays } from './services/utilities';
-import SearchExpenses from './components/SearchExpenses';
 
 const THEME_KEY = 'expense-tracker-theme';
 type Props = { setAppTheme: (theme: Theme) => void };

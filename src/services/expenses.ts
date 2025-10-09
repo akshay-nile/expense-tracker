@@ -28,7 +28,7 @@ async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = 
     return response;
 }
 
-async function getExpenses(path: string): Promise<[]> {
+async function tryToFetch<T>(path: string): Promise<T> {
     try {
         const response = await fetchWithBrowserId(`${baseURL}/expenses${path}`);
         return await (response as Response).json();
@@ -36,46 +36,46 @@ async function getExpenses(path: string): Promise<[]> {
         console.error(error);
         if (import.meta.env.VITE_WIFI_URL && retryCount-- > 0) {
             baseURL = import.meta.env.VITE_WIFI_URL as string;
-            return await getExpenses(path);
+            return await tryToFetch(path);
         }
     }
-    return [];
+    return [] as T;
 }
 
 export async function getYears(): Promise<Year[]> {
-    return await getExpenses('');
+    return await tryToFetch('');
 }
 
 export async function getMonthsOfYear(yearKey: string): Promise<Month[]> {
-    return await getExpenses(yearKey);
+    return await tryToFetch(yearKey);
 }
 
 export async function getDaysOfMonth(monthKey: string): Promise<Day[]> {
-    return await getExpenses(monthKey);
+    return await tryToFetch(monthKey);
 }
 
 export async function getExpensesOfDay(dayKey: string): Promise<Expense[]> {
-    return await getExpenses(dayKey);
+    return await tryToFetch(dayKey);
 }
 
 export async function getAllExpensesForExport(): Promise<DailyExpense[]> {
-    return await getExpenses('?export=true');
+    return await tryToFetch('?export=true');
 }
 
 export async function getReportOfMonthExpenses(monthKey: string): Promise<MonthReport[]> {
-    return await getExpenses(monthKey + '?report=true');
+    return await tryToFetch(monthKey + '?report=true');
 }
 
 export async function getReportOfYearExpenses(yearKey: string): Promise<YearReport[]> {
-    return await getExpenses(yearKey + '?report=true');
+    return await tryToFetch(yearKey + '?report=true');
 }
 
 export async function getReportOfCategories(reportKey: string): Promise<Category[]> {
-    return await getExpenses(reportKey + '?categories=true');
+    return await tryToFetch(reportKey + '?categories=true');
 }
 
 export async function getSearchedExpenses(search: string): Promise<SearchedExpense[]> {
-    return await getExpenses('?search=' + search);
+    return await tryToFetch('?search=' + search);
 }
 
 export async function postExpensesOfDay(expenses: Expense[], dayKey: string): Promise<PostResult | null> {

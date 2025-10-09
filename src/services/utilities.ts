@@ -134,6 +134,10 @@ export function mapRange(value: number, inpRange: [number, number], outRange: [n
     return b1 + ((clamped - a1) * (b2 - b1)) / (a2 - a1);
 }
 
+export function scrollToBottom() {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
 export let toastMessage: Toast;
 export const registerToastRef = (toastRef: Toast) => toastMessage = toastRef;
 

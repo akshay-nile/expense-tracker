@@ -4,7 +4,7 @@ import type { TotalChangeEvent, Year } from '../services/models';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Skeleton } from 'primereact/skeleton';
 import { getYears } from '../services/expenses';
-import { addMissingYears, breadCrumbUpdater, formatRupee, yearSkeletonLength } from '../services/utilities';
+import { addMissingYears, breadCrumbUpdater, formatRupee, scrollToBottom, yearSkeletonLength } from '../services/utilities';
 import MonthList from './MonthList';
 
 type Props = { today: Date, jumpTrigger: boolean };
@@ -44,7 +44,7 @@ function YearList({ today, jumpTrigger }: Props) {
         if (!jumpTrigger) return;
         if (years.length > 0) {
             setActiveIndex(today.getFullYear() - 2025 + 1);
-            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 300);
+            setTimeout(scrollToBottom, 300);
         }
     }, [jumpTrigger, years, today]);
 

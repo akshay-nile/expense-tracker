@@ -4,7 +4,7 @@ import type { Day, TotalChangeEvent } from '../services/models';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Skeleton } from 'primereact/skeleton';
 import { getDaysOfMonth } from '../services/expenses';
-import { addMissingDays, breadCrumbUpdater, daySkeletonLength, formatRupee, formatShortMonth } from '../services/utilities';
+import { addMissingDays, breadCrumbUpdater, daySkeletonLength, formatRupee, formatShortMonth, scrollToBottom } from '../services/utilities';
 import ExpenseList from './ExpenseList';
 
 type Props = {
@@ -51,7 +51,7 @@ function DayList({ today, jumpTrigger, monthKey, onMonthTotalChange }: Props) {
         if (!jumpTrigger) return;
         if (days.length > 0) {
             setActiveIndex(today.getDate());
-            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 900);
+            setTimeout(scrollToBottom, 900);
         }
     }, [jumpTrigger, days, today]);
 

@@ -3,7 +3,7 @@ import type { Expense, TotalChangeEvent } from '../services/models';
 
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { getExpensesOfDay } from '../services/expenses';
-import { formatRupee } from '../services/utilities';
+import { formatRupee, scrollToBottom } from '../services/utilities';
 import ExpenseListEditor from './ExpenseListEditor';
 
 type Props = {
@@ -49,7 +49,7 @@ function ExpenseList({ dayKey, jumpTrigger, onDayTotalChange }: Props) {
 
     useEffect(() => {
         if (!jumpTrigger) return;
-        setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 1200);
+        setTimeout(scrollToBottom, 1200);
     }, [jumpTrigger]);
 
     return (
