@@ -44,7 +44,7 @@ function YearList({ today, jumpTrigger }: Props) {
         if (!jumpTrigger) return;
         if (years.length > 0) {
             setActiveIndex(today.getFullYear() - 2025 + 1);
-            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 250);
+            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 300);
         }
     }, [jumpTrigger, years, today]);
 

@@ -51,7 +51,7 @@ function DayList({ today, jumpTrigger, monthKey, onMonthTotalChange }: Props) {
         if (!jumpTrigger) return;
         if (days.length > 0) {
             setActiveIndex(today.getDate());
-            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 750);
+            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 900);
         }
     }, [jumpTrigger, days, today]);
 

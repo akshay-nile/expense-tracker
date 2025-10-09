@@ -51,7 +51,7 @@ function MonthList({ today, jumpTrigger, yearKey, onYearTotalChange }: Props) {
         if (!jumpTrigger) return;
         if (months.length > 0) {
             setActiveIndex(today.getMonth() + 1);
-            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 500);
+            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 600);
         }
     }, [jumpTrigger, months, today]);
 

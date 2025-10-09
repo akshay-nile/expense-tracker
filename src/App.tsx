@@ -44,6 +44,7 @@ function App({ setAppTheme }: Props) {
   }
 
   const showYearReport = useCallback((splits: string[]) => {
+    setJumpTrigger(false);
     const yearKey = `/${splits[1]}`;
     setReportKey(yearKey);
     keyBackupRef.current = splits.join('/');
@@ -51,6 +52,7 @@ function App({ setAppTheme }: Props) {
   }, []);
 
   const showMonthReport = useCallback((splits: string[]) => {
+    setJumpTrigger(false);
     const monthKey = `/${splits[1]}/${splits[2]}`;
     setReportKey(monthKey);
     keyBackupRef.current = splits.join('/');
@@ -78,7 +80,7 @@ function App({ setAppTheme }: Props) {
     if (jumpTrigger) return;
     if (reportKey !== null) closeReport();
     setJumpTrigger(true);
-    setTimeout(() => setJumpTrigger(false), 1000);
+    setTimeout(() => setJumpTrigger(false), 1200);
     updateBreadCrumb('/' + formatISODate(today).replaceAll('-', '/'));
   }
 

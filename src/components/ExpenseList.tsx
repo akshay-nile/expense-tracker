@@ -49,7 +49,7 @@ function ExpenseList({ dayKey, jumpTrigger, onDayTotalChange }: Props) {
 
     useEffect(() => {
         if (!jumpTrigger) return;
-        setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 1000);
+        setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 1200);
     }, [jumpTrigger]);
 
     return (
