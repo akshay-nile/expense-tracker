@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
     target: 'esnext',
-    chunkSizeWarningLimit: 512, // Optional, Increases warning threshold
+    chunkSizeWarningLimit: 600, // Optional, Increases warning threshold
     rollupOptions: {
       output: {
         manualChunks(id) {

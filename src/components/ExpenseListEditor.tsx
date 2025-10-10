@@ -3,7 +3,7 @@ import type { EditExpense, Expense } from '../services/models';
 
 import { Button } from 'primereact/button';
 import { postExpensesOfDay } from '../services/expenses';
-import { scrollToBottom, toastMessage } from '../services/utilities';
+import { toastMessage } from '../services/utilities';
 
 type Props = {
     dayKey: string,
@@ -25,7 +25,7 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
     const [saving, setSaving] = useState<boolean>(false);
     const [invalid, setInvalid] = useState<boolean>(false);
 
-    useEffect(() => { scrollToBottom(); }, []);
+    useEffect(() => { lastInputRef.current?.scrollIntoView({ behavior: 'smooth' }); }, []);
 
     function isInvalidEditExpense(expense: EditExpense): boolean {
         if (expense.timestamp === 0) return true;
