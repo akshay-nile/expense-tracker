@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { EditExpense, Expense } from '../services/models';
 
 import { Button } from 'primereact/button';
 import { postExpensesOfDay } from '../services/expenses';
-import { toastMessage } from '../services/utilities';
+import { scrollToBottom, toastMessage } from '../services/utilities';
 
 type Props = {
     dayKey: string,
@@ -24,6 +24,8 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
     const [editExpenses, setEditExpenses] = useState<EditExpense[]>(expenses.map(toEditExpense));
     const [saving, setSaving] = useState<boolean>(false);
     const [invalid, setInvalid] = useState<boolean>(false);
+
+    useEffect(() => { scrollToBottom(); }, []);
 
     function isInvalidEditExpense(expense: EditExpense): boolean {
         if (expense.timestamp === 0) return true;

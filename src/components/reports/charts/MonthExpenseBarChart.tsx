@@ -23,7 +23,7 @@ function MonthExpenseBarChart({ expenses, dayCount }: Props) {
         setChartOptions({
             indexAxis: 'y',
             maintainAspectRatio: false,
-            aspectRatio: mapRange(expenses.length, [1, dayCount], [1.4, 0.4]),
+            aspectRatio: mapRange(expenses.length, [1, dayCount], [1.33, 0.33]),
             plugins: {
                 legend: { display: false },
                 tooltip: {
