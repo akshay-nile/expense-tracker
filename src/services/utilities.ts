@@ -99,7 +99,7 @@ export function addMissingDays(data: Array<Day> | Array<MonthReport>, today: Dat
     const itemMonth = parseInt(monthKey.split('/')[2]);
     const lastDay = new Date(itemYear, itemMonth, 0).getDate();
 
-    if ((today.getMonth() + 1) !== itemMonth) endAt = lastDay;
+    if (today.getFullYear() !== itemYear || (today.getMonth() + 1) !== itemMonth) endAt = lastDay;
 
     for (let item = startFrom; item <= endAt; item++) {
         const label = new String(item).padStart(2, '0');
