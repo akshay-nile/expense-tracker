@@ -47,7 +47,8 @@ bestzip "$DIST_DIR/$ZIP_FILE" "$DIST_DIR/*"
 
 # === STEP 3: Upload to server ===
 echo "📤 Uploading dist.zip file..."
-RESPONSE=$(curl -s -X POST -F "dist=@$DIST_DIR/$ZIP_FILE" "$DEPLOY_URL/$PROJECT_NAME")
+HARDWARE=$(powershell.exe -Command "(Get-CimInstance Win32_ComputerSystemProduct).UUID" | tr -d '\r')
+RESPONSE=$(curl -s -X "POST" -H "X-Hardware: $HARDWARE" -F "dist=@$DIST_DIR/$ZIP_FILE" "$DEPLOY_URL/$PROJECT_NAME")
 
 # === STEP 4: Verify response ===
 echo "👁️‍🗨️ Verifying Server Response: $RESPONSE"
