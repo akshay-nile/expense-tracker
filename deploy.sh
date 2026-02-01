@@ -17,14 +17,14 @@ DIST_DIR="./dist"
 ZIP_FILE="dist.zip"
 DEPLOY_URL="https://akshaynile.pythonanywhere.com/deploy"
 
-# === VALIDATION ===
+PROJECT_NAME="$1"
+
 if [ -z "$1" ]; then
-  echo "❌ Project name not provided!"
-  echo "Usage:👉 ./deploy.sh <project-name>"
-  exit 1
+  echo "❌ Project name not provided"
+  PROJECT_NAME=$(powershell.exe -Command "(Get-Content .\package.json | ConvertFrom-Json).name" | tr -d '\r')
+  echo "✅ Got project name from package.json"
 fi
 
-PROJECT_NAME="$1"
 
 echo "🚀 Starting project deployment: /$PROJECT_NAME"
 
@@ -51,9 +51,11 @@ HARDWARE=$(powershell.exe -Command "(Get-CimInstance Win32_ComputerSystemProduct
 RESPONSE=$(curl -s -X "POST" -H "X-Hardware: $HARDWARE" -F "dist=@$DIST_DIR/$ZIP_FILE" "$DEPLOY_URL/$PROJECT_NAME")
 
 # === STEP 4: Verify response ===
-echo "👁️‍🗨️ Verifying Server Response: $RESPONSE"
+echo "🔍 Verifying Server Response"
 OPERATION=$(powershell.exe -Command "('$RESPONSE' | ConvertFrom-Json).operation")
-AVAILABLE=$(powershell.exe -Command "('$RESPONSE' | ConvertFrom-Json).available -join ' '")
+echo "   operation: $OPERATION"
+AVAILABLE=$(powershell.exe -Command "('$RESPONSE' | ConvertFrom-Json).available -join ', '")
+echo "   available: [$AVAILABLE]"
 
 if [ "$OPERATION" == "success" ] && echo "$AVAILABLE" | grep -q "$PROJECT_NAME"; then
   echo "✅ Deployment Successful!"
