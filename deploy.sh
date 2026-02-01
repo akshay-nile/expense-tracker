@@ -37,6 +37,7 @@ echo "⚙️  Running npm build..."
 npm run build -- --base ./
 
 # === STEP 2: Zip the dist folder ===
+echo ""
 echo "💾 Zipping dist folder..."
 # Check if bestzip is installed
 if ! command -v bestzip &> /dev/null; then
