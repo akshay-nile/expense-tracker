@@ -1,13 +1,13 @@
 #!/bin/bash
-# deploy.sh - Automates deployment of a React project to your PythonAnywhere server
+# deploy.sh - Automates deployment of a React project to my PythonAnywhere server
 # Usage: ./deploy.sh <project-name>
 
 # Steps:
-# 1) Run React build (npm run build)
-# 2) Zip contents of dist/ into dist.zip
+# 1) Run the frontend build (npm run build)
+# 2) Zip contents of generated dist into dist.zip
 # 3) Upload dist.zip to server via POST request
-# 4) Verify response (operation = success && available[] contains project-name)
-# 5) Clean up local build folder if deployment successful
+# 4) Verify response (operation = success && available[] includes project-name)
+# 5) Clean up local generated dist folder if deployment is successful
 
 # Exit immediately if any command fails
 set -e
@@ -16,15 +16,17 @@ set -e
 DIST_DIR="./dist"
 ZIP_FILE="dist.zip"
 DEPLOY_URL="https://akshaynile.pythonanywhere.com/deploy"
-
 PROJECT_NAME="$1"
 
+# === Check if project name is available ===
 if [ -z "$1" ]; then
   echo "❌ Project name not provided"
   PROJECT_NAME=$(powershell.exe -Command "(Get-Content .\package.json | ConvertFrom-Json).name" | tr -d '\r')
+  if [ -z "$PROJECT_NAME" ]; then
+    exit 1
+  fi
   echo "✅ Got project name from package.json"
 fi
-
 
 echo "🚀 Starting project deployment: /$PROJECT_NAME"
 
@@ -33,7 +35,7 @@ echo "🗑️  Removing old dist folder..."
 rm -rf "$DIST_DIR" 
 
 # === STEP 1: Build React project ===
-echo "⚙️  Running npm build..."
+echo "⚙️  Running fontend build..."
 npm run build -- --base ./
 
 # === STEP 2: Zip the dist folder ===
@@ -52,21 +54,21 @@ HARDWARE=$(powershell.exe -Command "(Get-CimInstance Win32_ComputerSystemProduct
 RESPONSE=$(curl -s -X "POST" -H "X-Hardware: $HARDWARE" -F "dist=@$DIST_DIR/$ZIP_FILE" "$DEPLOY_URL/$PROJECT_NAME")
 
 # === STEP 4: Verify response ===
-echo "🔍 Verifying Server Response"
+echo "🔍 Verifying Server Response..."
 OPERATION=$(powershell.exe -Command "('$RESPONSE' | ConvertFrom-Json).operation")
 echo "   operation: $OPERATION"
 AVAILABLE=$(powershell.exe -Command "('$RESPONSE' | ConvertFrom-Json).available -join ', '")
 echo "   available: [$AVAILABLE]"
 
 if [ "$OPERATION" == "success" ] && echo "$AVAILABLE" | grep -q "$PROJECT_NAME"; then
-  echo "✅ Deployment Successful!"
+  echo "✅ Deployment Successful !"
   echo "🌐 https://akshaynile.pythonanywhere.com/projects/$PROJECT_NAME"
 
   # === STEP 5: Clean up dist folder ===
   echo "🧹 Removing the dist folder..."
   rm -rf "$DIST_DIR"
-  echo "✨ Clean-Up Done!"
+  echo "✨ Clean-Up Done !"
 else
-  echo "❌ Deployment Failed!"
+  echo "❌ Deployment Failed !"
   exit 1
 fi
