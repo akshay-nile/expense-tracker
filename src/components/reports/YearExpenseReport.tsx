@@ -57,7 +57,7 @@ function YearExpenseReport({ today, yearKey }: Props) {
                             {formatRupee(actualTotal)}
                             <div className="text-xs tracking-normal font-light mt-0.2">
                                 {estimatedTotal !== actualTotal && 'Actual '}
-                                Total of <b>{expenses.length}</b> Months
+                                Total of <b>{(expenses.length - 1) * 30 + today.getDate()}</b> Days
                             </div>
                         </div>
                         {
@@ -66,7 +66,7 @@ function YearExpenseReport({ today, yearKey }: Props) {
                                 className="text-xl text-center tracking-wider font-semibold cursor-pointer">
                                 {formatRupee(estimatedTotal)}
                                 <div className="text-xs tracking-normal font-light mt-0.2">
-                                    Estimated Total of <b>12</b> Months
+                                    Estimated Total of <b>365</b> Days
                                 </div>
                             </div>
                         }
