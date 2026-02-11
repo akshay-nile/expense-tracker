@@ -3,6 +3,7 @@ from services.expenses import export_all_expenses, get_all_days, get_all_expense
 from flask import Flask, jsonify, request
 from flask_cors import cross_origin
 
+
 app = Flask(__name__)
 
 
@@ -46,4 +47,4 @@ def expense_tracker(year=None, month=None, day=None):
     return 'Something Went Wrong!'
 
 
-app.run(host='0.0.0.0', port=5000, debug=True)
+app.run(host='localhost', port=5000, debug=True)

@@ -1,8 +1,5 @@
 import { type Category, type DailyExpense, type Day, type Expense, type Month, type MonthReport, type PostResult, type SearchedExpense, type Year, type YearReport } from './models';
 
-let baseURL = import.meta.env.VITE_BASE_URL as string;
-let retryCount = 2;
-
 // This wrapper function is used as an interceptor that inserts X-Browser-ID header in each request
 async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response | void> {
     const redirectURL = '/projects/browser-authenticator/index.html';
@@ -30,16 +27,12 @@ async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = 
 
 async function tryToFetch<T>(path: string): Promise<T> {
     try {
-        const response = await fetchWithBrowserId(`${baseURL}/expenses${path}`);
+        const response = await fetchWithBrowserId('/expenses' + path);
         return await (response as Response).json();
     } catch (error) {
         console.error(error);
-        if (import.meta.env.VITE_WIFI_URL && retryCount-- > 0) {
-            baseURL = import.meta.env.VITE_WIFI_URL as string;
-            return await tryToFetch(path);
-        }
+        return {} as T;
     }
-    return [] as T;
 }
 
 export async function getYears(): Promise<Year[]> {
@@ -80,12 +73,11 @@ export async function getSearchedExpenses(search: string): Promise<SearchedExpen
 
 export async function postExpensesOfDay(expenses: Expense[], dayKey: string): Promise<PostResult | null> {
     try {
-        const response = await fetchWithBrowserId(`${baseURL}/expenses${dayKey}`, {
+        const response = await fetchWithBrowserId('/expenses' + dayKey, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(expenses)
         });
         return await (response as Response).json();
-    } catch (error) { console.error(error); }
-    return null;
+    } catch (error) { console.error(error); return null; }
 }

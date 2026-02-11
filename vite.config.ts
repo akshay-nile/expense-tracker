@@ -5,6 +5,11 @@ import { defineConfig } from 'vite';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    proxy: {
+      '/expenses': { target: 'http://localhost:5000', changeOrigin: true }
+    }
+  },
   build: {
     target: 'esnext',
     chunkSizeWarningLimit: 600, // Optional, Increases warning threshold
