@@ -17,7 +17,6 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
     const toEditExpense = (e: Expense) => ({ ...e, amount: e.amount.toString() } as EditExpense);
     const toExpense = (e: EditExpense) => ({ ...e, amount: toTotal(e.amount) || 0 } as Expense);
     const notParsable = (a: string) => a.split('+').map(s => s.trim()).some(n => n.length === 0 || isNaN(Number(n)) || parseInt(n) <= 0);
-    const notUnique = (pa: string[]) => new Set(pa.map(s => s.trim().toLowerCase())).size !== pa.length;
 
     const lastInputRef = useRef<HTMLInputElement>(null);
 
@@ -68,6 +67,17 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
         return editExpense;
     }
 
+    function mergeDuplicatePurposes(expenses: Expense[]): Expense[] {
+        const purposeToExpenseMap = new Map<string, Expense>();
+        expenses.forEach(expense => {
+            const purpose = expense.purpose.toLowerCase();
+            const existingExpense = purposeToExpenseMap.get(purpose);
+            if (existingExpense) existingExpense.amount += expense.amount;
+            else purposeToExpenseMap.set(purpose, expense);
+        });
+        return Array.from(purposeToExpenseMap.values());
+    }
+
     async function saveEditExpenses() {
         if (editExpenses.some(isInvalidEditExpense)) {
             toastMessage.show({
@@ -77,19 +87,15 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
             setInvalid(true);
             return;
         }
-        const purposes = editExpenses.map(expense => expense.purpose);
-        if (notUnique(purposes)) {
-            toastMessage.show({
-                severity: 'error', summary: 'Duplicate Purpose',
-                detail: 'All the expenses should have unique Purpose fields'
-            });
-            setInvalid(true);
-            return;
-        }
         setSaving(true);
         editExpenses.forEach(expenses => expenses.purpose = expenses.purpose.trim());
-        const expensesToSave = editExpenses.map(toExpense);
+        const expensesToSave = mergeDuplicatePurposes(editExpenses.map(toExpense));
         const status = await postExpensesOfDay(expensesToSave, dayKey);
+        if (status === null) {
+            toastMessage.show({ severity: 'error', summary: 'Failed to Save' });
+            setSaving(false);
+            return;
+        }
         toastMessage.show({
             severity: 'success', summary: 'Expenses Saved',
             detail: `Added: ${status?.inserted} Updated: ${status?.updated} Deleted: ${status?.deleted}`
