@@ -1,5 +1,5 @@
 import sqlite3
-from typing import Dict, List
+from typing import Dict, List, Set
 
 _conn: sqlite3.Connection | None = None
 
@@ -175,6 +175,19 @@ def search_for_expenses(search: str) -> List[Dict]:
     ''', (search,))
     rows = cursor.fetchall()
     return [dict(row) for row in rows]
+
+
+def guess_purposes(amount: int) -> List[str]:
+    cursor = get_conn().cursor()
+    cursor.execute('''
+        SELECT purpose, COUNT(*) as hits
+        FROM expenses
+        WHERE amount = ? AND purpose != 'Miscs'
+        GROUP BY purpose
+        ORDER BY hits DESC;
+    ''', (amount,))
+    rows = cursor.fetchall()
+    return [row['purpose'] for row in rows]
 
 
 def update_expenses(expenses: List[Dict], year: str, month: str, day: str) -> Dict[str, int]:

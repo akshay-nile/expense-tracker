@@ -71,6 +71,10 @@ export async function getSearchedExpenses(search: string): Promise<SearchedExpen
     return await tryToFetch('?search=' + search);
 }
 
+export async function getGuessedPurposes(amount: number): Promise<string[]> {
+    return await tryToFetch('?amount=' + amount);
+}
+
 export async function postExpensesOfDay(expenses: Expense[], dayKey: string): Promise<PostResult | null> {
     try {
         const response = await fetchWithBrowserId('/expenses' + dayKey, {

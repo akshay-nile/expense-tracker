@@ -1,4 +1,4 @@
-from services.expenses import export_all_expenses, get_all_days, get_all_expenses, get_all_months, get_all_years, report_month_categories, report_month_expenses, report_year_categories, report_year_expenses, update_expenses, search_for_expenses
+from services.expenses import export_all_expenses, get_all_days, get_all_expenses, get_all_months, get_all_years, guess_purposes, report_month_categories, report_month_expenses, report_year_categories, report_year_expenses, update_expenses, search_for_expenses
 
 from flask import Flask, jsonify, request
 from flask_cors import cross_origin
@@ -17,6 +17,9 @@ def expense_tracker(year=None, month=None, day=None):
         search = request.args.get('search')
         if search:
             return jsonify(search_for_expenses(search))
+        amount = request.args.get('amount', '').strip()
+        if amount and amount.isnumeric():
+            return jsonify(guess_purposes(int(amount)))
         if request.args.get('export') == 'true':
             return jsonify(export_all_expenses())
         if year is None:

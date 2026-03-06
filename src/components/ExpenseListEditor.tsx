@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { EditExpense, Expense } from '../services/models';
 
 import { Button } from 'primereact/button';
-import { postExpensesOfDay } from '../services/expenses';
+import { getGuessedPurposes, postExpensesOfDay } from '../services/expenses';
 import { toastMessage } from '../services/utilities';
 
 type Props = {
@@ -46,6 +46,27 @@ function ExpenseListEditor({ dayKey, expenses, onSave, onCancel }: Props) {
         editExpense.amount = value;
         setEditExpenses([...editExpenses]);
         setInvalid(isInvalidEditExpense(editExpense));
+
+        // Try to guess the purpose from the entered amount while editing any new (unsaved) expense
+        if (!expenses.map(expense => expense.timestamp).includes(timestamp)) { // Is it a new/unsaved expense
+            if (value.trim().length >= 2 && value.endsWith('0') && !notParsable(value)) { // Is valid amount
+                (async () => {
+                    const guessedPurposes = await getGuessedPurposes(toTotal(value));
+                    if (guessedPurposes?.length > 0) {
+                        const editingPurposes = editExpenses.map(expense => expense.purpose);
+                        for (const purpose of guessedPurposes) { // Skip guessed purpose if already in editing
+                            if (editingPurposes.includes(purpose)) continue;
+                            editExpense.purpose = purpose;
+                            setEditExpenses([...editExpenses]);
+                            break;
+                        }
+                    }
+                })();
+            } else {
+                editExpense.purpose = 'Miscs';  // Purpose defaults to Miscs for any invalid amount value 
+                setEditExpenses([...editExpenses]);
+            }
+        }
     }
 
     function addNewEditExpense() {

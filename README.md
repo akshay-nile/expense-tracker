@@ -1,6 +1,6 @@
 # Expense Tracker App
 
-**Version: v1.1.4**  
+**Version: v1.2.4**  
 A personal web-based expense tracker app to keep track of the daily expenses efficiently.  
 This is a personal project — built for my own use — but structured like a production-ready app.  
 
