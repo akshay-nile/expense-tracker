@@ -3,7 +3,7 @@ import { type Category, type DailyExpense, type Day, type Expense, type Month, t
 async function tryToFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
     try {
         const response = await fetch('/expenses' + path, init);
-        if (response.status === 401) {
+        if (response.status === 400 || response.status === 401) {
             sessionStorage.setItem('initiator-url', window.location.href);
             window.location.href = '/projects/browser-authenticator/index.html';
         }
