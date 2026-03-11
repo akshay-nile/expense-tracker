@@ -1,34 +1,13 @@
 import { type Category, type DailyExpense, type Day, type Expense, type Month, type MonthReport, type PostResult, type SearchedExpense, type Year, type YearReport } from './models';
 
-// This wrapper function is used as an interceptor that inserts X-Browser-ID header in each request
-async function fetchWithBrowserId(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response | void> {
-    const redirectURL = '/projects/browser-authenticator/index.html';
-    const browserId = localStorage.getItem('browser-id');
-    const isProd = input.toString().startsWith('https');
-
-    if (isProd && !browserId) {
-        localStorage.setItem('initiator-url', window.location.href);
-        window.location.href = redirectURL;
-        return;
-    }
-
-    const headers = new Headers(init.headers || {});
-    if (browserId) headers.set('X-Browser-ID', browserId);
-
-    const response = await fetch(input, { ...init, headers });
-    if (response.status === 400 || response.status === 401) {
-        localStorage.setItem('initiator-url', window.location.href);
-        window.location.href = redirectURL;
-        return;
-    }
-
-    return response;
-}
-
-async function tryToFetch<T>(path: string): Promise<T> {
+async function tryToFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
     try {
-        const response = await fetchWithBrowserId('/expenses' + path);
-        return await (response as Response).json();
+        const response = await fetch('/expenses' + path, init);
+        if (response.status === 401) {
+            sessionStorage.setItem('initiator-url', window.location.href);
+            window.location.href = '/projects/browser-authenticator/index.html';
+        }
+        return await (response as Response).json() as T;
     } catch (error) {
         console.error(error);
         return {} as T;
@@ -77,11 +56,10 @@ export async function getGuessedPurposes(amount: number): Promise<string[]> {
 
 export async function postExpensesOfDay(expenses: Expense[], dayKey: string): Promise<PostResult | null> {
     try {
-        const response = await fetchWithBrowserId('/expenses' + dayKey, {
+        return await tryToFetch(dayKey, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(expenses)
         });
-        return await (response as Response).json();
     } catch (error) { console.error(error); return null; }
 }

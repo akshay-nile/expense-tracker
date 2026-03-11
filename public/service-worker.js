@@ -37,15 +37,14 @@ async function storeOrLoadMetaCache(key, value) {
 async function isUpdateAvailable() {
     try {
         const lastUpdateKey = 'last-update';
-        const lastUpdateVal = await storeOrLoadMetaCache(lastUpdateKey) ?? '0';
+        const lastUpdateVal = parseInt(await storeOrLoadMetaCache(lastUpdateKey) ?? '0');
 
-        const response = await fetch(`https://akshaynile.pythonanywhere.com/projects/${APP_NAME}`, {
-            headers: { 'X-Last-Update': lastUpdateVal }, cache: 'no-store'
-        });
+        const response = await fetch(`https://akshaynile.pythonanywhere.com/deploy/${APP_NAME}`, { cache: 'no-store' });
         const data = await response.json();
+        const updateAvailable = data.timestamp > lastUpdateVal;
 
-        if (data.is_updated) await storeOrLoadMetaCache(lastUpdateKey, data.last_update);
-        return [data.is_updated, lastUpdateVal > 0];
+        if (updateAvailable) await storeOrLoadMetaCache(lastUpdateKey, data.timestamp);
+        return [updateAvailable, lastUpdateVal > 0];
     } catch (err) {
         console.error('Error While Checking For Update:', err);
         return [false, false];
@@ -76,7 +75,7 @@ self.addEventListener('fetch', (event) => {
         if (cached) return cached;
 
         const response = await fetch(event.request);
-        if (event.request.url.includes(`/${APP_NAME}/`) || event.request.url.startsWith('https://unpkg.com/')) {
+        if (event.request.url.includes(`/projects/${APP_NAME}/`) || event.request.url.startsWith('https://unpkg.com/')) {
             try { cache.put(event.request, response.clone()); }
             catch (error) { console.warn('Caching Failed:', event.request.url, error); }
         }
