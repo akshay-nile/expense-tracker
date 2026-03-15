@@ -15,7 +15,7 @@ set -e
 # === CONFIGURATION ===
 DIST_DIR="./dist"
 ZIP_FILE="dist.zip"
-DEPLOY_URL="https://akshaynile.pythonanywhere.com/deploy"
+DEPLOY_URL="http://localhost:5000/deploy"
 PROJECT_NAME="$1"
 
 # === Check if project name is available ===
@@ -66,7 +66,7 @@ echo "   available: [$AVAILABLE]"
 
 if [ "$OPERATION" == "success" ] && echo "$AVAILABLE" | grep -q "$PROJECT_NAME"; then
   echo "✅ Deployment Successful !"
-  echo "🌐 https://akshaynile.pythonanywhere.com/projects/$PROJECT_NAME"
+  echo "🌐 http://localhost:5000/projects/$PROJECT_NAME"
 
   # === STEP 6: Clean up dist folder ===
   echo "🧹 Removing the dist folder..."

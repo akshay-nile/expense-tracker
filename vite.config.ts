@@ -7,7 +7,10 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      '/expenses': { target: 'http://localhost:5000', changeOrigin: true }
+      '^/(expenses|projects|browsers|browser|register)': {
+        target: 'http://localhost:5000',
+        changeOrigin: true
+      }
     }
   },
   build: {
