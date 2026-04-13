@@ -36,9 +36,11 @@ function YearExpenseReport({ today, yearKey }: Props) {
                 addMissingMonths(data, today, yearKey, true);
                 setExpenses(data);
 
-                const totalDaysTillToday = (data.length - 1) * 30 + today.getDate();
-                const estimatedTotal = Math.round((actualTotal / totalDaysTillToday) * 365);
-                setEstimatedTotal(estimatedTotal);
+                const thisYearKey = `/${today.getFullYear()}`;
+                if (yearKey === thisYearKey) {
+                    const totalDaysTillToday = (data.length - 1) * 30 + today.getDate();
+                    setEstimatedTotal(Math.round((actualTotal / totalDaysTillToday) * 365));
+                } else setEstimatedTotal(actualTotal);
             }
             catch (error) { console.error(error); }
             finally { setLoading(false); }

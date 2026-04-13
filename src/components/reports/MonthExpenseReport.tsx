@@ -41,8 +41,10 @@ function MonthExpenseReport({ today, monthKey }: Props) {
                 addMissingDays(data, today, monthKey, true);
                 setExpenses(data);
 
-                const estimatedTotal = Math.round((actualTotal / data.length) * dayCount);
-                setEstimatedTotal(estimatedTotal);
+                const thisMonthKey = `/${today.getFullYear()}/${(today.getMonth() + 1).toString().padStart(2, '0')}`;
+                if (monthKey === thisMonthKey) {
+                    setEstimatedTotal(Math.round((actualTotal / data.length) * dayCount));
+                } else setEstimatedTotal(actualTotal);
             }
             catch (error) { console.error(error); }
             finally { setLoading(false); }
